@@ -67,10 +67,14 @@ public class JsonParser<T : NSObject> {
 						instance.setValue(date, forKey: key)
 					}
 				} else {
-					if typeInfo.isArray {
-						self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
+					if jsonValue != nil {
+						if typeInfo.isArray {
+							self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
+						} else {
+							self.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonObject: jsonValue as! [String: AnyObject])
+						}
 					} else {
-						self.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonObject: jsonValue as! [String: AnyObject])
+						instance.setValue(nil, forKey: key)
 					}
 				}
 			}
