@@ -1,0 +1,14 @@
+{
+	"name": "Anderson",
+	"age": 25,
+	"height": 1.85,
+	"employee": {
+		"name": "Jorge Xavier",
+		"age": 20
+	},
+	"boss": {
+		"name": "Thiago N.",
+		"age": 55,
+		"bad": true
+	}
+}
