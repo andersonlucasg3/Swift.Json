@@ -37,6 +37,7 @@
 		71026D031E77028700B313F7 /* JsonParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonParser.swift; sourceTree = "<group>"; };
 		71026D041E77028700B313F7 /* JsonParserConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonParserConfig.swift; sourceTree = "<group>"; };
 		71026D091E77040600B313F7 /* jsonObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonObject.json; sourceTree = "<group>"; };
+		71026D0B1E77066900B313F7 /* Swift.Json.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Swift.Json.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +62,7 @@
 		71026CDF1E7700EA00B313F7 = {
 			isa = PBXGroup;
 			children = (
+				71026D0B1E77066900B313F7 /* Swift.Json.podspec */,
 				71026CED1E77024900B313F7 /* Swift.Json */,
 				71026CF81E77024A00B313F7 /* Swift.JsonTests */,
 				71026CEC1E77024900B313F7 /* Products */,
@@ -499,6 +501,7 @@
 				71026CFE1E77024A00B313F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		71026D021E77024A00B313F7 /* Build configuration list for PBXNativeTarget "Swift.JsonTests" */ = {
 			isa = XCConfigurationList;
@@ -507,6 +510,7 @@
 				71026D001E77024A00B313F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
