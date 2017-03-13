@@ -33,31 +33,6 @@ public class JsonParser<T : NSObject> {
 		return type.init()
 	}
 	
-	fileprivate class func isPrimitiveType(_ typeString: String) -> Bool {
-		return typeString == "Int" ||
-			typeString == "Int16" ||
-			typeString == "Int32" ||
-			typeString == "Int64" ||
-			typeString == "UInt16" ||
-			typeString == "UInt32" ||
-			typeString == "UInt64" ||
-			typeString == "Float" ||
-			typeString == "CGFloat" ||
-			typeString == "Double" ||
-			typeString == "Bool" ||
-			typeString == "NSNumber" ||
-			self.isStringType(typeString)
-	}
-	
-	fileprivate class func isStringType(_ typeString: String) -> Bool {
-		return typeString == "String" ||
-			typeString == "NSString"
-	}
-	
-	fileprivate class func isDateType(_ typeString: String) -> Bool {
-		return typeString == "Date" || typeString == "NSDate"
-	}
-	
 	fileprivate class func isToCallManualBlock<T : NSObject>(_ key: String, inConfig config: JsonParserConfig<T>? = nil) -> Bool {
 		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)
 	}
@@ -92,15 +67,15 @@ public class JsonParser<T : NSObject> {
 					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
 					let object = block(jsonValue!, key)
 					instance.setValue(object, forKey: key)
-				} else if (self.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray) {
+				} else if (JsonCommon.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray) {
 					if typeInfo.isOptional || jsonValue != nil {
 						self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
 					}
-				} else if self.isPrimitiveType(typeInfo.typeName) {
+				} else if JsonCommon.isPrimitiveType(typeInfo.typeName) {
 					if typeInfo.isOptional || jsonValue != nil {
 						instance.setValue(jsonValue, forKey: key)
 					}
-				} else if self.isDateType(typeInfo.typeName) {
+				} else if JsonCommon.isDateType(typeInfo.typeName) {
 					if typeInfo.isOptional || jsonValue != nil {
 						let date = self.stringValueToDateAutomatic(jsonValue as? String)
 						instance.setValue(date, forKey: key)
@@ -121,7 +96,7 @@ public class JsonParser<T : NSObject> {
 	fileprivate class func populateArray(forKey key: String, intoInstance instance: inout AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonArray jsonArray: [AnyObject]) {
 		var array = [AnyObject]()
 		for item in jsonArray {
-			if self.isPrimitiveType(typeInfo.typeName) {
+			if JsonCommon.isPrimitiveType(typeInfo.typeName) {
 				array.append(item)
 			} else {
 				var inst: AnyObject = self.getInstance(forType: NSClassFromString(typeInfo.typeName) as! NSObject.Type)
@@ -160,7 +135,7 @@ public class JsonParser<T : NSObject> {
 			typeString = self.parseGenericType(typeString, enclosing: "Array")
 		}
 		
-		if self.isPrimitiveType(typeString) {
+		if JsonCommon.isPrimitiveType(typeString) {
 			classType = NSClassFromString("Swift.\(typeString)")
 		} else {
 			classType = NSClassFromString(typeString)

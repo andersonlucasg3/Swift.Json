@@ -15,6 +15,7 @@
 		71026D071E77028700B313F7 /* JsonParserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D041E77028700B313F7 /* JsonParserConfig.swift */; };
 		71026D081E77028700B313F7 /* JsonParserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D041E77028700B313F7 /* JsonParserConfig.swift */; };
 		71026D0A1E77040600B313F7 /* jsonObject.json in Resources */ = {isa = PBXBuildFile; fileRef = 71026D091E77040600B313F7 /* jsonObject.json */; };
+		71026D101E77308000B313F7 /* JsonCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0F1E77308000B313F7 /* JsonCommon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +38,7 @@
 		71026D031E77028700B313F7 /* JsonParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonParser.swift; sourceTree = "<group>"; };
 		71026D041E77028700B313F7 /* JsonParserConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonParserConfig.swift; sourceTree = "<group>"; };
 		71026D091E77040600B313F7 /* jsonObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonObject.json; sourceTree = "<group>"; };
+		71026D0F1E77308000B313F7 /* JsonCommon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonCommon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 		71026CED1E77024900B313F7 /* Swift.Json */ = {
 			isa = PBXGroup;
 			children = (
+				71026D0F1E77308000B313F7 /* JsonCommon.swift */,
 				71026D031E77028700B313F7 /* JsonParser.swift */,
 				71026D041E77028700B313F7 /* JsonParserConfig.swift */,
 				71026CEE1E77024900B313F7 /* Swift.Json.h */,
@@ -211,6 +214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				71026D071E77028700B313F7 /* JsonParserConfig.swift in Sources */,
+				71026D101E77308000B313F7 /* JsonCommon.swift in Sources */,
 				71026D051E77028700B313F7 /* JsonParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
