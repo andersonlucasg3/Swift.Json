@@ -9,6 +9,18 @@
 import Foundation
 
 internal class JsonCommon {
+	internal class func isToCallManualBlock<T : NSObject>(_ key: String, inConfig config: JsonConfig<T>? = nil) -> Bool {
+		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)
+	}
+	
+	internal class func stringValueToDateAutomatic(_ string: String?) -> Date? {
+		let formatter = DateFormatter()
+		if string != nil {
+			return formatter.date(from: string!)
+		}
+		return nil
+	}
+	
 	internal class func isPrimitiveType(_ typeString: String) -> Bool {
 		return typeString == "Int" ||
 			typeString == "Int16" ||

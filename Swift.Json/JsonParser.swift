@@ -33,18 +33,6 @@ public class JsonParser<T : NSObject> {
 		return type.init()
 	}
 	
-	fileprivate class func isToCallManualBlock<T : NSObject>(_ key: String, inConfig config: JsonConfig<T>? = nil) -> Bool {
-		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)
-	}
-	
-	fileprivate class func stringValueToDateAutomatic(_ string: String?) -> Date? {
-		let formatter = DateFormatter()
-		if string != nil {
-			return formatter.date(from: string!)
-		}
-		return nil
-	}
-	
 	fileprivate class func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonConfig<T>? = nil) {
 		var cls: Mirror? = Mirror(reflecting: instance)
 		while cls != nil {
@@ -59,11 +47,11 @@ public class JsonParser<T : NSObject> {
 					typeInfo.type = JsonCommon.getClassFromProperty(key, fromInstance: instance)
 				}
 				
-				if self.isToCallManualBlock(key, inConfig: config) {
+				if JsonCommon.isToCallManualBlock(key, inConfig: config) {
 					guard let block = config!.fieldManualParsing[key] else { continue }
 					let object = block(jsonValue!, key)
 					instance.setValue(object, forKey: key)
-				} else if self.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
+				} else if JsonCommon.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
 					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
 					let object = block(jsonValue!, key)
 					instance.setValue(object, forKey: key)
@@ -77,7 +65,7 @@ public class JsonParser<T : NSObject> {
 					}
 				} else if JsonCommon.isDateType(typeInfo.typeName) {
 					if typeInfo.isOptional || jsonValue != nil {
-						let date = self.stringValueToDateAutomatic(jsonValue as? String)
+						let date = JsonCommon.stringValueToDateAutomatic(jsonValue as? String)
 						instance.setValue(date, forKey: key)
 					}
 				} else {
