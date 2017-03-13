@@ -11,7 +11,7 @@ import Foundation
 class JsonWriter {
 	public class func write<T : NSObject>(anyObject: T) -> String? {
 		let jsonObject = self.jsonObject(fromObject: anyObject)
-		guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions.prettyPrinted) else { return nil }
+		guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0)) else { return nil }
 		return String(data: data, encoding: .utf8)
 	}
 	
@@ -22,9 +22,9 @@ class JsonWriter {
 		while (cls != nil) {
 			for child in cls!.children {
 				let key = child.label!
-				let value = child.value
+				let value: AnyObject? = child.value as AnyObject?
 				
-				let propertyType = type(of: value)
+				let propertyType = type(of: child.value)
 				var typeInfo = JsonCommon.parseTypeString("\(propertyType)")
 				
 				if typeInfo.type == nil {
@@ -46,8 +46,12 @@ class JsonWriter {
 				} else if JsonCommon.isDateType(typeInfo.typeName) {
 					jsonObject[key] = JsonCommon.stringValueToDateAutomatic(value as? String) as AnyObject?
 				} else {
-					let jObj = self.jsonObject(fromObject: value as! NSObject)
-					jsonObject[key] = jObj as AnyObject?
+					if value is NSNull || value == nil {
+						jsonObject[key] = NSNull()
+					} else if value is NSObject {
+						let jObj = self.jsonObject(fromObject: value as! NSObject)
+						jsonObject[key] = jObj as AnyObject?
+					}
 				}
 			}
 			cls = cls?.superclassMirror

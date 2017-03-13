@@ -45,6 +45,26 @@ class Swift_JsonTests: XCTestCase {
 		assert(testObject?.boss?.age == 55)
 		assert(testObject?.boss?.bad == true)
 	}
+	
+	func testJsonWriter() {
+		let testObject = TestObject()
+		testObject.name = "Anderson"
+		testObject.age = 27
+		testObject.employee = Employee()
+		testObject.employee?.name = "Lucas"
+		testObject.employee?.age = 35
+		
+		let jsonString = JsonWriter.write(anyObject: testObject)
+		
+		let jsonObject = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: .allowFragments) as! [String: AnyObject]
+		
+		assert(testObject.name == jsonObject["name"] as? String)
+		assert(testObject.age == jsonObject["age"] as? Int)
+		
+		let employee = jsonObject["employee"] as! [String: AnyObject]
+		assert(testObject.employee?.name == employee["name"] as? String)
+		assert(testObject.employee?.age == employee["age"] as? Int)
+	}
 }
 
 class Employee: NSObject {
@@ -68,7 +88,6 @@ class TestObject : NSObject {
 	fileprivate(set) dynamic var name: String?
 	fileprivate(set) dynamic var age: Int = 0
 	fileprivate(set) dynamic var height: Float = 0
-	fileprivate(set) dynamic var date: Date?
 	fileprivate(set) dynamic var employee: Employee?
 	fileprivate(set) dynamic var boss: Boss?
 	
