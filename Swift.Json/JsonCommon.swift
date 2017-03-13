@@ -8,6 +8,8 @@
 
 import Foundation
 
+internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bool, isArray: Bool)
+
 internal class JsonCommon {
 	internal class func isToCallManualBlock<T : NSObject>(_ key: String, inConfig config: JsonConfig<T>? = nil) -> Bool {
 		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)

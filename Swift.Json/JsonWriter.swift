@@ -21,7 +21,7 @@ class JsonWriter {
 		var cls: Mirror? = Mirror(reflecting: object)
 		while (cls != nil) {
 			for child in cls!.children {
-				let key = child.label!
+				guard let key = child.label else { continue }
 				let value: AnyObject? = child.value as AnyObject?
 				
 				let propertyType = type(of: child.value)
@@ -49,8 +49,13 @@ class JsonWriter {
 					if value is NSNull || value == nil {
 						jsonObject[key] = NSNull()
 					} else if value is NSObject {
-						let jObj = self.jsonObject(fromObject: value as! NSObject)
-						jsonObject[key] = jObj as AnyObject?
+						if typeInfo.isArray {
+							let jArray = self.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
+							jsonObject[key] = jArray as AnyObject?
+						} else {
+							let jObj = self.jsonObject(fromObject: value as! NSObject)
+							jsonObject[key] = jObj as AnyObject?
+						}
 					}
 				}
 			}
@@ -58,5 +63,20 @@ class JsonWriter {
 		}
 		
 		return jsonObject
+	}
+	
+	fileprivate class func jsonArray(fromObjects objects: [AnyObject], withTypeInfo typeInfo: TypeInfo) -> AnyObject {
+		if JsonCommon.isPrimitiveType(typeInfo.typeName) {
+			return objects as AnyObject
+		}
+		
+		var jsonArray = [AnyObject]()
+		
+		for obj in objects {
+			let jObj = self.jsonObject(fromObject: obj as! NSObject)
+			jsonArray.append(jObj as AnyObject)
+		}
+		
+		return jsonArray as AnyObject
 	}
 }

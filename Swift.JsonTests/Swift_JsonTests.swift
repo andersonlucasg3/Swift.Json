@@ -65,6 +65,46 @@ class Swift_JsonTests: XCTestCase {
 		assert(testObject.employee?.name == employee["name"] as? String)
 		assert(testObject.employee?.age == employee["age"] as? Int)
 	}
+	
+	func testArrayWriting() {
+		let emp1 = Employee()
+		emp1.name = "Emp 1"
+		emp1.age = 55
+		let emp2 = Employee()
+		emp2.name = "Emp 2"
+		emp2.age = 35
+		
+		let testObject = TestObject()
+		testObject.name = "Anderson"
+		testObject.age = 27
+		testObject.employee = Employee()
+		testObject.employee?.name = "Lucas"
+		testObject.employee?.age = 35
+		testObject.boss = Boss()
+		testObject.boss?.bad = false
+		testObject.boss?.employees = Array()
+		testObject.boss?.employees?.append(emp1)
+		testObject.boss?.employees?.append(emp2)
+		
+		let jsonString = JsonWriter.write(anyObject: testObject)
+		
+		let jsonObject = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: .allowFragments) as! [String: AnyObject]
+		
+		assert(testObject.name == jsonObject["name"] as? String)
+		assert(testObject.age == jsonObject["age"] as? Int)
+		
+		let employee = jsonObject["employee"] as! [String: AnyObject]
+		assert(testObject.employee?.name == employee["name"] as? String)
+		assert(testObject.employee?.age == employee["age"] as? Int)
+		
+		let boss = jsonObject["boss"] as! [String: AnyObject]
+		let employees = boss["employees"] as! [[String: AnyObject]]
+		assert(testObject.boss?.employees?[0].name == employees[0]["name"] as? String)
+		assert(testObject.boss?.employees?[0].age == employees[0]["age"] as? Int)
+		
+		assert(testObject.boss?.employees?[1].name == employees[1]["name"] as? String)
+		assert(testObject.boss?.employees?[1].age == employees[1]["age"] as? Int)
+	}
 }
 
 class Employee: NSObject {
@@ -78,6 +118,7 @@ class Employee: NSObject {
 
 class Boss : Employee {
 	fileprivate(set) dynamic var bad: Bool = false
+	fileprivate(set) dynamic var employees: [Employee]?
 	
 	required init() {
 		super.init()

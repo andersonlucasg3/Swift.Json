@@ -8,8 +8,6 @@
 
 import Foundation
 
-internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bool, isArray: Bool)
-
 public class JsonParser<T : NSObject> {
 	public init() {
 		
