@@ -24,7 +24,7 @@ class Swift_JsonTests: XCTestCase {
 	func testJsonParser() {
 		let jsonString = try! String(contentsOfFile: Bundle(for: self.classForCoder).path(forResource: "jsonObject", ofType: "json")!)
 		
-		let config = JsonParserConfig<TestObject>()
+		let config = JsonConfig<TestObject>()
 		config.set(forDataType: "Date") { (value, key) -> AnyObject? in
 			if key == "date" {
 				let formatter = DateFormatter()

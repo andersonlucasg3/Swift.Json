@@ -15,7 +15,7 @@ public class JsonParser<T : NSObject> {
 		
 	}
 	
-	public class func parse(string: String, withConfig config: JsonParserConfig<T>? = nil) -> T? {
+	public class func parse(string: String, withConfig config: JsonConfig<T>? = nil) -> T? {
 		let options = JSONSerialization.ReadingOptions(rawValue: 0)
 		guard let data = string.data(using: .utf8) else { return nil }
 		guard let jsonObject = try! JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject] else { return nil }
@@ -33,7 +33,7 @@ public class JsonParser<T : NSObject> {
 		return type.init()
 	}
 	
-	fileprivate class func isToCallManualBlock<T : NSObject>(_ key: String, inConfig config: JsonParserConfig<T>? = nil) -> Bool {
+	fileprivate class func isToCallManualBlock<T : NSObject>(_ key: String, inConfig config: JsonConfig<T>? = nil) -> Bool {
 		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)
 	}
 	
@@ -45,7 +45,7 @@ public class JsonParser<T : NSObject> {
 		return nil
 	}
 	
-	fileprivate class func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonParserConfig<T>? = nil) {
+	fileprivate class func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonConfig<T>? = nil) {
 		var cls: Mirror? = Mirror(reflecting: instance)
 		while cls != nil {
 			for child in cls!.children {
@@ -53,10 +53,10 @@ public class JsonParser<T : NSObject> {
 				let jsonValue = jsonObject[key]
 				
 				let propertyType = type(of: child.value)
-				var typeInfo = self.parseTypeString("\(propertyType)")
+				var typeInfo = JsonCommon.parseTypeString("\(propertyType)")
 				
 				if typeInfo.type == nil {
-					typeInfo.type = self.getClassFromProperty(key, fromInstance: instance)
+					typeInfo.type = JsonCommon.getClassFromProperty(key, fromInstance: instance)
 				}
 				
 				if self.isToCallManualBlock(key, inConfig: config) {
@@ -111,53 +111,5 @@ public class JsonParser<T : NSObject> {
 		var propertyInstance = self.getInstance(forType: typeInfo.type as! NSObject.Type)
 		self.populate(instance: &propertyInstance, withJsonObject: jsonObject)
 		instance.setValue(propertyInstance, forKey: key)
-	}
-	
-	fileprivate class func parseGenericType(_ type: String, enclosing: String) -> String {
-		let enclosingLength = enclosing.lengthOfBytes(using: .utf8) + 1
-		let typeLength = type.lengthOfBytes(using: .utf8) - enclosingLength - 1
-		return NSString(string: type).substring(with: NSRange(location: enclosingLength, length: typeLength))
-	}
-	
-	fileprivate class func parseTypeString(_ type: String) -> TypeInfo {
-		var isArray = false
-		var isOptional = false
-		var classType: AnyClass?
-		
-		var typeString = type
-		if type.contains("Optional") {
-			isOptional = true
-			typeString = self.parseGenericType(type, enclosing: "Optional")
-		}
-		
-		if typeString.contains("Array") {
-			isArray = true
-			typeString = self.parseGenericType(typeString, enclosing: "Array")
-		}
-		
-		if JsonCommon.isPrimitiveType(typeString) {
-			classType = NSClassFromString("Swift.\(typeString)")
-		} else {
-			classType = NSClassFromString(typeString)
-		}
-		
-		return (type: classType, typeName: typeString, isOptional: isOptional, isArray: isArray)
-	}
-	
-	fileprivate class func getClassFromProperty(_ name: String, fromInstance instance: AnyObject) -> AnyClass? {
-		let charArray = NSString(string: name).utf8String
-		
-		let instanceClass: AnyClass? = instance.classForCoder
-		guard let property = class_getProperty(instanceClass, charArray) else { return nil }
-		guard let attributes = property_getAttributes(property) else { return nil }
-		
-		let attributeString = String(cString: attributes)
-		let slices = attributeString.components(separatedBy: "\"")
-		if slices.count > 1 {
-			let clsName = slices[1]
-			
-			return NSClassFromString(clsName)
-		}
-		return nil
 	}
 }
