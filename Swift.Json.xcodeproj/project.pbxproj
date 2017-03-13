@@ -15,6 +15,8 @@
 		71026D071E77028700B313F7 /* JsonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D041E77028700B313F7 /* JsonConfig.swift */; };
 		71026D081E77028700B313F7 /* JsonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D041E77028700B313F7 /* JsonConfig.swift */; };
 		71026D0A1E77040600B313F7 /* jsonObject.json in Resources */ = {isa = PBXBuildFile; fileRef = 71026D091E77040600B313F7 /* jsonObject.json */; };
+		71026D0D1E7713FE00B313F7 /* JsonWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0C1E7713FE00B313F7 /* JsonWriter.swift */; };
+		71026D0E1E77140800B313F7 /* JsonWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0C1E7713FE00B313F7 /* JsonWriter.swift */; };
 		71026D101E77308000B313F7 /* JsonCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0F1E77308000B313F7 /* JsonCommon.swift */; };
 		71026D111E7732E100B313F7 /* JsonCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0F1E77308000B313F7 /* JsonCommon.swift */; };
 /* End PBXBuildFile section */
@@ -39,6 +41,7 @@
 		71026D031E77028700B313F7 /* JsonParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonParser.swift; sourceTree = "<group>"; };
 		71026D041E77028700B313F7 /* JsonConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonConfig.swift; sourceTree = "<group>"; };
 		71026D091E77040600B313F7 /* jsonObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonObject.json; sourceTree = "<group>"; };
+		71026D0C1E7713FE00B313F7 /* JsonWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonWriter.swift; sourceTree = "<group>"; };
 		71026D0F1E77308000B313F7 /* JsonCommon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonCommon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +87,7 @@
 			children = (
 				71026D0F1E77308000B313F7 /* JsonCommon.swift */,
 				71026D031E77028700B313F7 /* JsonParser.swift */,
+				71026D0C1E7713FE00B313F7 /* JsonWriter.swift */,
 				71026D041E77028700B313F7 /* JsonConfig.swift */,
 				71026CEE1E77024900B313F7 /* Swift.Json.h */,
 				71026CEF1E77024900B313F7 /* Info.plist */,
@@ -214,6 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71026D0D1E7713FE00B313F7 /* JsonWriter.swift in Sources */,
 				71026D071E77028700B313F7 /* JsonConfig.swift in Sources */,
 				71026D101E77308000B313F7 /* JsonCommon.swift in Sources */,
 				71026D051E77028700B313F7 /* JsonParser.swift in Sources */,
@@ -227,6 +232,7 @@
 				71026D081E77028700B313F7 /* JsonConfig.swift in Sources */,
 				71026D061E77028700B313F7 /* JsonParser.swift in Sources */,
 				71026D111E7732E100B313F7 /* JsonCommon.swift in Sources */,
+				71026D0E1E77140800B313F7 /* JsonWriter.swift in Sources */,
 				71026CFA1E77024A00B313F7 /* Swift_JsonTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
