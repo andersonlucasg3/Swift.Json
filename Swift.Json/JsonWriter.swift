@@ -8,7 +8,7 @@
 
 import Foundation
 
-class JsonWriter {
+public class JsonWriter {
 	public class func write<T : NSObject>(anyObject: T) -> String? {
 		let jsonObject = self.jsonObject(fromObject: anyObject)
 		guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0)) else { return nil }
