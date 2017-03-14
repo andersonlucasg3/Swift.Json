@@ -1,0 +1,8 @@
+language: swift
+osx_image: xcode8.2
+
+script:
+- xcodebuild clean build test -project Swift.Json.xcodeproj -scheme Swift.Json GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES
+
+after_success:
+- bash <(curl -s https://codecov.io/bash)
