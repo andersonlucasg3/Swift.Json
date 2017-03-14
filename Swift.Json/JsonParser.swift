@@ -8,8 +8,15 @@
 
 import Foundation
 
+/// JsonParser class for parsing json strings into structured objects. 
 public class JsonParser {
 	
+	/// Parses a string to the expected generic type populating an object instance mapped to the json string.
+	///
+	/// - Parameters:
+	///   - string: the json string
+	///   - config: optional parameter with custom parsing configs
+	/// - Returns: The object populated with the values from the json string.
 	public class func parse<T: NSObject>(string: String, withConfig config: JsonConfig? = nil) -> T? {
 		let options = JSONSerialization.ReadingOptions(rawValue: 0)
 		guard let data = string.data(using: .utf8) else { return nil }
