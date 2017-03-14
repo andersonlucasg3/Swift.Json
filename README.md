@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andersonlucasg3/Swift.Json.svg?branch=master)](https://travis-ci.org/andersonlucasg3/Swift.Json)
+
 # Swift.Json
 Json auto-parsing for Swift.
 
