@@ -10,7 +10,7 @@ import Foundation
 
 public typealias JsonConvertBlock = ((_ object: AnyObject, _ andKey: String) -> AnyObject?)
 
-public class JsonConfig<T : NSObject> {
+public class JsonConfig {
 	internal var fieldManualParsing: [String: JsonConvertBlock] = Dictionary()
 	internal var dataTypeManualParsing: [String: JsonConvertBlock] = Dictionary()
 	
@@ -18,11 +18,11 @@ public class JsonConfig<T : NSObject> {
 		
 	}
 	
-	public func set(forField field: String, parserBlock block: @escaping JsonConvertBlock) {
+	public func set(forField field: String, withConversionBlock block: @escaping JsonConvertBlock) {
 		self.fieldManualParsing[field] = block
 	}
 	
-	public func set(forDataType type: String, parserBlock block: @escaping JsonConvertBlock) {
+	public func set(forDataType type: String, withConversionBlock block: @escaping JsonConvertBlock) {
 		self.dataTypeManualParsing[type] = block
 	}
 }

@@ -15,7 +15,7 @@ public class JsonWriter {
 		return String(data: data, encoding: .utf8)
 	}
 	
-	fileprivate class func jsonObject<T : NSObject>(fromObject object: T, withConfig config: JsonConfig<T>? = nil) -> [String: AnyObject] {
+	fileprivate class func jsonObject<T : NSObject>(fromObject object: T, withConfig config: JsonConfig? = nil) -> [String: AnyObject] {
 		var jsonObject = [String: AnyObject]()
 		
 		var cls: Mirror? = Mirror(reflecting: object)
