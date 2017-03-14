@@ -8,14 +8,20 @@
 
 import Foundation
 
+/// JsonWriter class for writing json strings from structured objects.
 public class JsonWriter {
+	
+	/// Writes a json formatted string from a Swift class object.
+	///
+	/// - Parameter anyObject: instance of an object to be written.
+	/// - Returns: a String of json formatted representation of the anyObject.
 	public class func write<T : NSObject>(anyObject: T) -> String? {
 		let jsonObject = self.jsonObject(fromObject: anyObject)
 		guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0)) else { return nil }
 		return String(data: data, encoding: .utf8)
 	}
 	
-	fileprivate class func jsonObject<T : NSObject>(fromObject object: T, withConfig config: JsonConfig<T>? = nil) -> [String: AnyObject] {
+	fileprivate class func jsonObject<T : NSObject>(fromObject object: T, withConfig config: JsonConfig? = nil) -> [String: AnyObject] {
 		var jsonObject = [String: AnyObject]()
 		
 		var cls: Mirror? = Mirror(reflecting: object)

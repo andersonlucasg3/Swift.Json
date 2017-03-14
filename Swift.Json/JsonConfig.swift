@@ -8,9 +8,11 @@
 
 import Foundation
 
+/// JsonConvertBlock is the block to convert values from object to json and json to object.
 public typealias JsonConvertBlock = ((_ object: AnyObject, _ andKey: String) -> AnyObject?)
 
-public class JsonConfig<T : NSObject> {
+/// JsonConfig class for setting custom conversion fields or data types.
+public class JsonConfig {
 	internal var fieldManualParsing: [String: JsonConvertBlock] = Dictionary()
 	internal var dataTypeManualParsing: [String: JsonConvertBlock] = Dictionary()
 	
@@ -18,11 +20,21 @@ public class JsonConfig<T : NSObject> {
 		
 	}
 	
-	public func set(forField field: String, parserBlock block: @escaping JsonConvertBlock) {
+	/// Sets the conversion block for a given field name.
+	///
+	/// - Parameters:
+	///   - field: the field name String
+	///   - block: the conversion block
+	public func set(forField field: String, withConversionBlock block: @escaping JsonConvertBlock) {
 		self.fieldManualParsing[field] = block
 	}
 	
-	public func set(forDataType type: String, parserBlock block: @escaping JsonConvertBlock) {
+	/// Sets the conversion block for a given data type name.
+	///
+	/// - Parameters:
+	///   - type: the type name, ex: "Date"
+	///   - block: the conversion block
+	public func set(forDataType type: String, withConversionBlock block: @escaping JsonConvertBlock) {
 		self.dataTypeManualParsing[type] = block
 	}
 }

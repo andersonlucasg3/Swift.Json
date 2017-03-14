@@ -8,12 +8,16 @@
 
 import Foundation
 
-public class JsonParser<T : NSObject> {
-	public init() {
-		
-	}
+/// JsonParser class for parsing json strings into structured objects. 
+public class JsonParser {
 	
-	public class func parse(string: String, withConfig config: JsonConfig<T>? = nil) -> T? {
+	/// Parses a string to the expected generic type populating an object instance mapped to the json string.
+	///
+	/// - Parameters:
+	///   - string: the json string
+	///   - config: optional parameter with custom parsing configs
+	/// - Returns: The object populated with the values from the json string.
+	public class func parse<T: NSObject>(string: String, withConfig config: JsonConfig? = nil) -> T? {
 		let options = JSONSerialization.ReadingOptions(rawValue: 0)
 		guard let data = string.data(using: .utf8) else { return nil }
 		guard let jsonObject = try! JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject] else { return nil }
@@ -31,7 +35,7 @@ public class JsonParser<T : NSObject> {
 		return type.init()
 	}
 	
-	fileprivate class func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonConfig<T>? = nil) {
+	fileprivate class func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonConfig? = nil) {
 		var cls: Mirror? = Mirror(reflecting: instance)
 		while cls != nil {
 			for child in cls!.children {
