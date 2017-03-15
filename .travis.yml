@@ -1,7 +1,5 @@
 language: objective-c
-
-script:
-- xcodebuild clean -project Swift.Json.xcodeproj -scheme SwiftJson build
-
-after_success:
-- bash <(curl -s https://codecov.io/bash)
+osx_image: xcode8.2
+xcode_project: Swift.Json.xcodeproj
+xcode_scheme: SwiftJson
+xcode_sdk: iphonesimulator10.1
