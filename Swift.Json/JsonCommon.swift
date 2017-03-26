@@ -10,12 +10,24 @@ import Foundation
 
 internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bool, isArray: Bool)
 
+internal typealias ValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> AnyObject?)
+internal typealias PrimitiveValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> Void)
+internal typealias ManualValueBlock = PrimitiveValueBlock
+internal typealias ArrayValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
+internal typealias ObjectValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
+
 internal class JsonCommon {
-	internal class func isToCallManualBlock(_ key: String, inConfig config: JsonConfig? = nil) -> Bool {
+	var valueBlock: ValueBlock?
+	var primitiveValueBlock: PrimitiveValueBlock?
+	var manualValueBlock: ManualValueBlock?
+	var arrayValueBlock: ArrayValueBlock?
+	var objectValueBlock: ObjectValueBlock?
+	
+	internal func isToCallManualBlock(_ key: String, inConfig config: JsonConfig? = nil) -> Bool {
 		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)
 	}
 	
-	internal class func stringValueToDateAutomatic(_ string: String?) -> Date? {
+	internal func stringValueToDateAutomatic(_ string: String?) -> Date? {
 		let formatter = DateFormatter()
 		if string != nil {
 			return formatter.date(from: string!)
@@ -23,7 +35,7 @@ internal class JsonCommon {
 		return nil
 	}
 	
-	internal class func isPrimitiveType(_ typeString: String) -> Bool {
+	internal func isPrimitiveType(_ typeString: String) -> Bool {
 		return typeString == "Int" ||
 			typeString == "Int16" ||
 			typeString == "Int32" ||
@@ -39,22 +51,22 @@ internal class JsonCommon {
 			self.isStringType(typeString)
 	}
 	
-	internal class func isStringType(_ typeString: String) -> Bool {
+	internal func isStringType(_ typeString: String) -> Bool {
 		return typeString == "String" ||
 			typeString == "NSString"
 	}
 	
-	internal class func isDateType(_ typeString: String) -> Bool {
+	internal func isDateType(_ typeString: String) -> Bool {
 		return typeString == "Date" || typeString == "NSDate"
 	}
 	
-	internal class func parseGenericType(_ type: String, enclosing: String) -> String {
+	internal func parseGenericType(_ type: String, enclosing: String) -> String {
 		let enclosingLength = enclosing.lengthOfBytes(using: .utf8) + 1
 		let typeLength = type.lengthOfBytes(using: .utf8) - enclosingLength - 1
 		return NSString(string: type).substring(with: NSRange(location: enclosingLength, length: typeLength))
 	}
 	
-	internal class func parseTypeString(_ type: String) -> TypeInfo {
+	internal func parseTypeString(_ type: String) -> TypeInfo {
 		var isArray = false
 		var isOptional = false
 		var classType: AnyClass?
@@ -70,7 +82,7 @@ internal class JsonCommon {
 			typeString = self.parseGenericType(typeString, enclosing: "Array")
 		}
 		
-		if JsonCommon.isPrimitiveType(typeString) {
+		if self.isPrimitiveType(typeString) {
 			classType = NSClassFromString("Swift.\(typeString)")
 		} else {
 			classType = NSClassFromString(typeString)
@@ -79,7 +91,7 @@ internal class JsonCommon {
 		return (type: classType, typeName: typeString, isOptional: isOptional, isArray: isArray)
 	}
 	
-	internal class func getClassFromProperty(_ name: String, fromInstance instance: AnyObject) -> AnyClass? {
+	internal func getClassFromProperty(_ name: String, fromInstance instance: AnyObject) -> AnyClass? {
 		let charArray = NSString(string: name).utf8String
 		
 		let instanceClass: AnyClass? = instance.classForCoder
@@ -94,5 +106,97 @@ internal class JsonCommon {
 			return NSClassFromString(clsName)
 		}
 		return nil
+	}
+	
+	internal func populate(instance: AnyObject, withObject object: AnyObject, withConfig config: JsonConfig? = nil) {
+		var cls: Mirror? = Mirror(reflecting: instance)
+		while cls != nil {
+			for child in cls!.children {
+				let key = child.label!
+				let value = self.valueBlock?(instance, object, key)
+				
+				let propertyType = type(of: child.value)
+				var typeInfo = self.parseTypeString("\(propertyType)")
+				
+				if typeInfo.type == nil {
+					typeInfo.type = self.getClassFromProperty(key, fromInstance: instance)
+				}
+				
+				if self.isToCallManualBlock(key, inConfig: config) {
+					guard let block = config!.fieldManualParsing[key] else { continue }
+					let object = block(value!, key)
+					self.manualValueBlock?(instance, object, key)
+				} else if self.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
+					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
+					let object = block(value!, key)
+					self.manualValueBlock?(instance, object, key)
+				} else if (self.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray) {
+					if typeInfo.isOptional || value != nil {
+						self.arrayValueBlock?(instance, typeInfo, value, key)
+					}
+				} else if self.isPrimitiveType(typeInfo.typeName) {
+					if typeInfo.isOptional || value != nil {
+						self.primitiveValueBlock?(instance, value, key)
+					}
+				} else {
+					if value is NSNull || value == nil {
+						self.primitiveValueBlock?(instance, nil, key)
+					} else if value != nil {
+						if typeInfo.isArray {
+							self.arrayValueBlock?(instance, typeInfo, value, key)
+						} else {
+							self.objectValueBlock?(instance, typeInfo, value, key)
+						}
+					}
+				}
+			}
+			cls = cls?.superclassMirror
+		}
+	}
+	
+	internal func write(fromObject object: AnyObject, withConfig config: JsonConfig? = nil) -> [String: AnyObject] {
+		let jsonObject = NSMutableDictionary() as AnyObject
+		
+		var cls: Mirror? = Mirror(reflecting: object)
+		while (cls != nil) {
+			for child in cls!.children {
+				guard let key = child.label else { continue }
+				let value: AnyObject? = self.valueBlock?(object, nil, key)
+				
+				let propertyType = type(of: child.value)
+				var typeInfo = self.parseTypeString("\(propertyType)")
+				
+				if typeInfo.type == nil {
+					typeInfo.type = self.getClassFromProperty(key, fromInstance: object)
+				}
+				
+				if self.isToCallManualBlock(key, inConfig: config) {
+					guard let block = config!.fieldManualParsing[key] else { continue }
+					let jsonValue = block(value as AnyObject, key)
+					self.manualValueBlock?(jsonObject as AnyObject, jsonValue, key)
+				} else if self.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
+					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
+					let jsonValue = block(value as AnyObject, key)
+					self.manualValueBlock?(jsonObject as AnyObject, jsonValue, key)
+				} else if self.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray {
+					self.primitiveValueBlock?(jsonObject as AnyObject, value, key)
+				} else if self.isPrimitiveType(typeInfo.typeName) {
+					self.primitiveValueBlock?(jsonObject as AnyObject, value, key)
+				} else {
+					if value is NSNull || value == nil {
+						self.primitiveValueBlock?(jsonObject as AnyObject, NSNull(), key)
+					} else if value is NSObject {
+						if typeInfo.isArray {
+							self.arrayValueBlock?(jsonObject, typeInfo, value, key)
+						} else {
+							self.objectValueBlock?(jsonObject, typeInfo, value, key)
+						}
+					}
+				}
+			}
+			cls = cls?.superclassMirror
+		}
+		
+		return jsonObject as! [String: AnyObject]
 	}
 }
