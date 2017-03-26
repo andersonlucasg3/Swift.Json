@@ -35,58 +35,6 @@ public class JsonParser {
 		return type.init()
 	}
 	
-	fileprivate class func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonConfig? = nil) {
-		var cls: Mirror? = Mirror(reflecting: instance)
-		while cls != nil {
-			for child in cls!.children {
-				let key = child.label!
-				let jsonValue = jsonObject[key]
-				
-				let propertyType = type(of: child.value)
-				var typeInfo = JsonCommon.parseTypeString("\(propertyType)")
-				
-				if typeInfo.type == nil {
-					typeInfo.type = JsonCommon.getClassFromProperty(key, fromInstance: instance)
-				}
-				
-				if JsonCommon.isToCallManualBlock(key, inConfig: config) {
-					guard let block = config!.fieldManualParsing[key] else { continue }
-					let object = block(jsonValue!, key)
-					instance.setValue(object, forKey: key)
-				} else if JsonCommon.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
-					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
-					let object = block(jsonValue!, key)
-					instance.setValue(object, forKey: key)
-				} else if (JsonCommon.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray) {
-					if typeInfo.isOptional || jsonValue != nil {
-						self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
-					}
-				} else if JsonCommon.isPrimitiveType(typeInfo.typeName) {
-					if typeInfo.isOptional || jsonValue != nil {
-						instance.setValue(jsonValue, forKey: key)
-					}
-				} else if JsonCommon.isDateType(typeInfo.typeName) {
-					if typeInfo.isOptional || jsonValue != nil {
-						let date = JsonCommon.stringValueToDateAutomatic(jsonValue as? String)
-						instance.setValue(date, forKey: key)
-					}
-				} else {
-					if jsonValue != nil {
-						if typeInfo.isArray {
-							self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
-						} else {
-							self.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonObject: jsonValue as! [String: AnyObject])
-						}
-					} else {
-						instance.setValue(nil, forKey: key)
-					}
-				}
-			}
-			
-			cls = cls?.superclassMirror
-		}
-	}
-	
 	fileprivate class func populateArray(forKey key: String, intoInstance instance: inout AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonArray jsonArray: [AnyObject]) {
 		var array = [AnyObject]()
 		for item in jsonArray {
