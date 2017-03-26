@@ -11,11 +11,11 @@ import Foundation
 internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bool, isArray: Bool)
 
 internal class JsonCommon {
-	internal class func isToCallManualBlock(_ key: String, inConfig config: JsonConfig? = nil) -> Bool {
+	internal func isToCallManualBlock(_ key: String, inConfig config: JsonConfig? = nil) -> Bool {
 		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)
 	}
 	
-	internal class func stringValueToDateAutomatic(_ string: String?) -> Date? {
+	internal func stringValueToDateAutomatic(_ string: String?) -> Date? {
 		let formatter = DateFormatter()
 		if string != nil {
 			return formatter.date(from: string!)
@@ -23,7 +23,7 @@ internal class JsonCommon {
 		return nil
 	}
 	
-	internal class func isPrimitiveType(_ typeString: String) -> Bool {
+	internal func isPrimitiveType(_ typeString: String) -> Bool {
 		return typeString == "Int" ||
 			typeString == "Int16" ||
 			typeString == "Int32" ||
@@ -39,22 +39,22 @@ internal class JsonCommon {
 			self.isStringType(typeString)
 	}
 	
-	internal class func isStringType(_ typeString: String) -> Bool {
+	internal func isStringType(_ typeString: String) -> Bool {
 		return typeString == "String" ||
 			typeString == "NSString"
 	}
 	
-	internal class func isDateType(_ typeString: String) -> Bool {
+	internal func isDateType(_ typeString: String) -> Bool {
 		return typeString == "Date" || typeString == "NSDate"
 	}
 	
-	internal class func parseGenericType(_ type: String, enclosing: String) -> String {
+	internal func parseGenericType(_ type: String, enclosing: String) -> String {
 		let enclosingLength = enclosing.lengthOfBytes(using: .utf8) + 1
 		let typeLength = type.lengthOfBytes(using: .utf8) - enclosingLength - 1
 		return NSString(string: type).substring(with: NSRange(location: enclosingLength, length: typeLength))
 	}
 	
-	internal class func parseTypeString(_ type: String) -> TypeInfo {
+	internal func parseTypeString(_ type: String) -> TypeInfo {
 		var isArray = false
 		var isOptional = false
 		var classType: AnyClass?
@@ -70,7 +70,7 @@ internal class JsonCommon {
 			typeString = self.parseGenericType(typeString, enclosing: "Array")
 		}
 		
-		if JsonCommon.isPrimitiveType(typeString) {
+		if self.isPrimitiveType(typeString) {
 			classType = NSClassFromString("Swift.\(typeString)")
 		} else {
 			classType = NSClassFromString(typeString)
@@ -79,7 +79,7 @@ internal class JsonCommon {
 		return (type: classType, typeName: typeString, isOptional: isOptional, isArray: isArray)
 	}
 	
-	internal class func getClassFromProperty(_ name: String, fromInstance instance: AnyObject) -> AnyClass? {
+	internal func getClassFromProperty(_ name: String, fromInstance instance: AnyObject) -> AnyClass? {
 		let charArray = NSString(string: name).utf8String
 		
 		let instanceClass: AnyClass? = instance.classForCoder
