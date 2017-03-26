@@ -10,6 +10,7 @@ import Foundation
 
 /// JsonWriter class for writing json strings from structured objects.
 public class JsonWriter {
+	fileprivate static let commons: JsonCommon = JsonCommon()
 	
 	/// Writes a json formatted string from a Swift class object.
 	///
@@ -31,26 +32,26 @@ public class JsonWriter {
 				let value: AnyObject? = child.value as AnyObject?
 				
 				let propertyType = type(of: child.value)
-				var typeInfo = JsonCommon.parseTypeString("\(propertyType)")
+				var typeInfo = self.commons.parseTypeString("\(propertyType)")
 				
 				if typeInfo.type == nil {
-					typeInfo.type = JsonCommon.getClassFromProperty(key, fromInstance: object)
+					typeInfo.type = self.commons.getClassFromProperty(key, fromInstance: object)
 				}
 				
-				if JsonCommon.isToCallManualBlock(key, inConfig: config) {
+				if self.commons.isToCallManualBlock(key, inConfig: config) {
 					guard let block = config!.fieldManualParsing[key] else { continue }
 					let jsonValue = block(value as AnyObject, key)
 					jsonObject[key] = jsonValue
-				} else if JsonCommon.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
+				} else if self.commons.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
 					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
 					let jsonValue = block(value as AnyObject, key)
 					jsonObject[key] = jsonValue
-				} else if JsonCommon.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray {
+				} else if self.commons.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray {
 					jsonObject[key] = value as AnyObject?
-				} else if JsonCommon.isPrimitiveType(typeInfo.typeName) {
+				} else if self.commons.isPrimitiveType(typeInfo.typeName) {
 					jsonObject[key] = value as AnyObject?
-				} else if JsonCommon.isDateType(typeInfo.typeName) {
-					jsonObject[key] = JsonCommon.stringValueToDateAutomatic(value as? String) as AnyObject?
+				} else if self.commons.isDateType(typeInfo.typeName) {
+					jsonObject[key] = self.commons.stringValueToDateAutomatic(value as? String) as AnyObject?
 				} else {
 					if value is NSNull || value == nil {
 						jsonObject[key] = NSNull()
@@ -72,7 +73,7 @@ public class JsonWriter {
 	}
 	
 	fileprivate class func jsonArray(fromObjects objects: [AnyObject], withTypeInfo typeInfo: TypeInfo) -> AnyObject {
-		if JsonCommon.isPrimitiveType(typeInfo.typeName) {
+		if self.commons.isPrimitiveType(typeInfo.typeName) {
 			return objects as AnyObject
 		}
 		
