@@ -10,6 +10,7 @@ import Foundation
 
 /// JsonParser class for parsing json strings into structured objects. 
 public class JsonParser {
+	fileprivate static let commons: JsonCommon = JsonCommon()
 	
 	/// Parses a string to the expected generic type populating an object instance mapped to the json string.
 	///
@@ -21,9 +22,9 @@ public class JsonParser {
 		let options = JSONSerialization.ReadingOptions(rawValue: 0)
 		guard let data = string.data(using: .utf8) else { return nil }
 		guard let jsonObject = try! JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject] else { return nil }
-		
+	
 		var instance: AnyObject = (getInstance() as T) as AnyObject
-		self.populate(instance: &instance, withJsonObject: jsonObject, withConfig: config)
+		self.commons.populate(instance: &instance, withJsonObject: jsonObject, withConfig: config)
 		return instance as? T
 	}
 	
@@ -38,11 +39,11 @@ public class JsonParser {
 	fileprivate class func populateArray(forKey key: String, intoInstance instance: inout AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonArray jsonArray: [AnyObject]) {
 		var array = [AnyObject]()
 		for item in jsonArray {
-			if JsonCommon.isPrimitiveType(typeInfo.typeName) {
+			if self.commons.isPrimitiveType(typeInfo.typeName) {
 				array.append(item)
 			} else {
 				var inst: AnyObject = self.getInstance(forType: NSClassFromString(typeInfo.typeName) as! NSObject.Type)
-				self.populate(instance: &inst, withJsonObject: item as! [String : AnyObject])
+				self.commons.populate(instance: &inst, withJsonObject: item as! [String : AnyObject])
 				array.append(inst)
 			}
 		}
@@ -51,7 +52,7 @@ public class JsonParser {
 	
 	fileprivate class func populateObject(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonObject jsonObject: [String: AnyObject]) {
 		var propertyInstance = self.getInstance(forType: typeInfo.type as! NSObject.Type)
-		self.populate(instance: &propertyInstance, withJsonObject: jsonObject)
+		self.commons.populate(instance: &propertyInstance, withJsonObject: jsonObject)
 		instance.setValue(propertyInstance, forKey: key)
 	}
 }
