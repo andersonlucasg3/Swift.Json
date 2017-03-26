@@ -16,6 +16,7 @@ public class JsonConfig {
 	internal var fieldManualParsing: [String: JsonConvertBlock] = Dictionary()
 	internal var dataTypeManualParsing: [String: JsonConvertBlock] = Dictionary()
     internal var remappingManualParsing: [String: String] = Dictionary()
+	internal var pathManualParsing: [String: JsonConvertBlock] = Dictionary()
 	
 	/// Should the JsonWriter include null values, e.g.: { "client": null }
 	public var shouldIncludeNullValueKeys: Bool = true
@@ -54,4 +55,13 @@ public class JsonConfig {
     public func set(fromKey key: String, to counterpartKey: String) {
         self.remappingManualParsing[key] = counterpartKey
     }
+	
+	/// Sets the conversion block for a given path of the json.
+	///
+	/// - Parameters:
+	///   - path: the path string, ex: "user_info.address.street"
+	///   - block: the conversion block
+	public func set(forPath path: String, withConversionBlock block: @escaping JsonConvertBlock) {
+		self.pathManualParsing[path] = block
+	}
 }
