@@ -22,11 +22,10 @@ public class JsonParser {
 		guard let data = string.data(using: .utf8) else { return nil }
 		guard let jsonObject = try! JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject] else { return nil }
 	
-		
 		self.setupCommons()
 		
-		var instance: AnyObject = (getInstance() as T) as AnyObject
-		self.commons.populate(instance: &instance, withJsonObject: jsonObject, withConfig: config)
+		let instance: AnyObject = (getInstance() as T) as AnyObject
+		self.commons.populate(instance: instance, withObject: jsonObject as AnyObject, withConfig: config)
 		
 		self.unsetupCommons()
 		
@@ -34,6 +33,11 @@ public class JsonParser {
 	}
 	
 	fileprivate func setupCommons() {
+		self.commons.valueBlock = { (instance, value, key) -> AnyObject? in
+			guard let dict = value as? [String: AnyObject] else { return nil }
+			return dict[key] as AnyObject
+		}
+		
 		self.commons.primitiveValueBlock = { (instance, value, key) -> Void in
 			instance.setValue(value, forKey: key)
 		}
@@ -43,11 +47,11 @@ public class JsonParser {
 		}
 		
 		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonObject: value as! [String : AnyObject])
+			self?.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withObject: value as AnyObject)
 		}
 		
 		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: value as! [AnyObject])
+			self?.populateArray(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonArray: value as! [AnyObject])
 		}
 	}
 	
@@ -66,23 +70,23 @@ public class JsonParser {
 		return type.init()
 	}
 	
-	fileprivate func populateArray(forKey key: String, intoInstance instance: inout AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonArray jsonArray: [AnyObject]) {
+	fileprivate func populateArray(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonArray jsonArray: [AnyObject]) {
 		var array = [AnyObject]()
 		for item in jsonArray {
 			if commons.isPrimitiveType(typeInfo.typeName) {
 				array.append(item)
 			} else {
-				var inst: AnyObject = self.getInstance(forType: NSClassFromString(typeInfo.typeName) as! NSObject.Type)
-				commons.populate(instance: &inst, withJsonObject: item as! [String : AnyObject])
+				let inst: AnyObject = self.getInstance(forType: NSClassFromString(typeInfo.typeName) as! NSObject.Type)
+				commons.populate(instance: inst, withObject: item)
 				array.append(inst)
 			}
 		}
 		instance.setValue(array, forKey: key)
 	}
 	
-	fileprivate func populateObject(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonObject jsonObject: [String: AnyObject]) {
-		var propertyInstance = self.getInstance(forType: typeInfo.type as! NSObject.Type)
-		commons.populate(instance: &propertyInstance, withJsonObject: jsonObject)
+	fileprivate func populateObject(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withObject object: AnyObject) {
+		let propertyInstance = self.getInstance(forType: typeInfo.type as! NSObject.Type)
+		commons.populate(instance: propertyInstance, withObject: object)
 		instance.setValue(propertyInstance, forKey: key)
 	}
 }
