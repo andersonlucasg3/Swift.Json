@@ -34,7 +34,8 @@ class Swift_JsonTests: XCTestCase {
 			return nil
 		}
 		
-		let testObject: TestObject? = JsonParser.parse(string: jsonString, withConfig: config)
+		let parser = JsonParser()
+		let testObject: TestObject? = parser.parse(string: jsonString, withConfig: config)
 		assert(testObject != nil)
 		assert(testObject?.name == "Anderson")
 		assert(testObject?.age == 25)
