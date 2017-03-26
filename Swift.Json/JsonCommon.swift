@@ -10,7 +10,17 @@ import Foundation
 
 internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bool, isArray: Bool)
 
+internal typealias PrimitiveValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> Void)
+internal typealias ManualValueBlock = PrimitiveValueBlock
+internal typealias ArrayValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
+internal typealias ObjectValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
+
 internal class JsonCommon {
+	var primitiveValueBlock: PrimitiveValueBlock?
+	var manualValueBlock: ManualValueBlock?
+	var arrayValueBlock: ArrayValueBlock?
+	var objectValueBlock: ObjectValueBlock?
+	
 	internal func isToCallManualBlock(_ key: String, inConfig config: JsonConfig? = nil) -> Bool {
 		return config != nil && (config?.fieldManualParsing[key] != nil || config?.dataTypeManualParsing[key] != nil)
 	}
@@ -94,5 +104,75 @@ internal class JsonCommon {
 			return NSClassFromString(clsName)
 		}
 		return nil
+	}
+	
+	internal func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonConfig? = nil) {
+		var cls: Mirror? = Mirror(reflecting: instance)
+		while cls != nil {
+			for child in cls!.children {
+				let key = child.label!
+				let jsonValue = jsonObject[key]
+				
+				let propertyType = type(of: child.value)
+				var typeInfo = self.parseTypeString("\(propertyType)")
+				
+				if typeInfo.type == nil {
+					typeInfo.type = self.getClassFromProperty(key, fromInstance: instance)
+				}
+				
+				if self.isToCallManualBlock(key, inConfig: config) {
+					
+					guard let block = config!.fieldManualParsing[key] else { continue }
+					let object = block(jsonValue!, key)
+//					instance.setValue(object, forKey: key)
+					self.manualValueBlock?(instance, object, key)
+					
+				} else if self.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
+					
+					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
+					let object = block(jsonValue!, key)
+//					instance.setValue(object, forKey: key)
+					self.manualValueBlock?(instance, object, key)
+					
+				} else if (self.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray) {
+					
+					if typeInfo.isOptional || jsonValue != nil {
+//						self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
+						self.arrayValueBlock?(instance, typeInfo, jsonValue, key)
+					}
+					
+				} else if self.isPrimitiveType(typeInfo.typeName) {
+					
+					if typeInfo.isOptional || jsonValue != nil {
+//						instance.setValue(jsonValue, forKey: key)
+						self.primitiveValueBlock?(instance, jsonValue, key)
+					}
+					
+//				} else if self.isDateType(typeInfo.typeName) {
+//					
+//					if typeInfo.isOptional || jsonValue != nil {
+//						let date = self.stringValueToDateAutomatic(jsonValue as? String)
+////						instance.setValue(date, forKey: key)
+//						self.primitiveValueBlock?(instance, jsonValue, key)
+//					}
+//					
+				} else {
+					if jsonValue != nil {
+						if typeInfo.isArray {
+//							self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
+							self.arrayValueBlock?(instance, typeInfo, jsonValue, key)
+						} else {
+//							self.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonObject: jsonValue as! [String: AnyObject])
+							self.objectValueBlock?(instance, typeInfo, jsonValue, key)
+						}
+					} else {
+//						instance.setValue(nil, forKey: key)
+						self.primitiveValueBlock?(instance, nil, key)
+					}
+				}
+			}
+			
+			cls = cls?.superclassMirror
+		}
 	}
 }
