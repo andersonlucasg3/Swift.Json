@@ -12,7 +12,7 @@ internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bo
 
 internal typealias PrimitiveValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> Void)
 internal typealias ManualValueBlock = PrimitiveValueBlock
-internal typealias ArrayValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
+internal typealias ArrayValueBlock = ((_ instance: inout AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
 internal typealias ObjectValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
 
 internal class JsonCommon {
@@ -138,7 +138,7 @@ internal class JsonCommon {
 					
 					if typeInfo.isOptional || jsonValue != nil {
 //						self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
-						self.arrayValueBlock?(instance, typeInfo, jsonValue, key)
+						self.arrayValueBlock?(&instance, typeInfo, jsonValue, key)
 					}
 					
 				} else if self.isPrimitiveType(typeInfo.typeName) {
@@ -160,7 +160,7 @@ internal class JsonCommon {
 					if jsonValue != nil {
 						if typeInfo.isArray {
 //							self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
-							self.arrayValueBlock?(instance, typeInfo, jsonValue, key)
+							self.arrayValueBlock?(&instance, typeInfo, jsonValue, key)
 						} else {
 //							self.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonObject: jsonValue as! [String: AnyObject])
 							self.objectValueBlock?(instance, typeInfo, jsonValue, key)
