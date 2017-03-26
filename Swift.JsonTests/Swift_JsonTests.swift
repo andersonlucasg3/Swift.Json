@@ -34,7 +34,8 @@ class Swift_JsonTests: XCTestCase {
 			return nil
 		}
 		
-		let testObject: TestObject? = JsonParser.parse(string: jsonString, withConfig: config)
+		let parser = JsonParser()
+		let testObject: TestObject? = parser.parse(string: jsonString, withConfig: config)
 		assert(testObject != nil)
 		assert(testObject?.name == "Anderson")
 		assert(testObject?.age == 25)
@@ -54,7 +55,8 @@ class Swift_JsonTests: XCTestCase {
 		testObject.employee?.name = "Lucas"
 		testObject.employee?.age = 35
 		
-		let jsonString = JsonWriter.write(anyObject: testObject)
+		let writer = JsonWriter()
+		let jsonString = writer.write(anyObject: testObject)
 		
 		let jsonObject = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: .allowFragments) as! [String: AnyObject]
 		
@@ -86,7 +88,8 @@ class Swift_JsonTests: XCTestCase {
 		testObject.boss?.employees?.append(emp1)
 		testObject.boss?.employees?.append(emp2)
 		
-		let jsonString = JsonWriter.write(anyObject: testObject)
+		let writer = JsonWriter()
+		let jsonString = writer.write(anyObject: testObject)
 		
 		let jsonObject = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: .allowFragments) as! [String: AnyObject]
 		

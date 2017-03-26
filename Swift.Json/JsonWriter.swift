@@ -10,76 +10,63 @@ import Foundation
 
 /// JsonWriter class for writing json strings from structured objects.
 public class JsonWriter {
+	fileprivate let commons: JsonCommon = JsonCommon()
 	
 	/// Writes a json formatted string from a Swift class object.
 	///
 	/// - Parameter anyObject: instance of an object to be written.
 	/// - Returns: a String of json formatted representation of the anyObject.
-	public class func write<T : NSObject>(anyObject: T) -> String? {
-		let jsonObject = self.jsonObject(fromObject: anyObject)
+	public func write<T : NSObject>(anyObject: T) -> String? {
+		self.setupCommons()
+		
+		let jsonObject = self.commons.write(fromObject: anyObject)
+		
+		self.unsetupCommons()
+		
 		guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0)) else { return nil }
 		return String(data: data, encoding: .utf8)
 	}
 	
-	fileprivate class func jsonObject<T : NSObject>(fromObject object: T, withConfig config: JsonConfig? = nil) -> [String: AnyObject] {
-		var jsonObject = [String: AnyObject]()
-		
-		var cls: Mirror? = Mirror(reflecting: object)
-		while (cls != nil) {
-			for child in cls!.children {
-				guard let key = child.label else { continue }
-				let value: AnyObject? = child.value as AnyObject?
-				
-				let propertyType = type(of: child.value)
-				var typeInfo = JsonCommon.parseTypeString("\(propertyType)")
-				
-				if typeInfo.type == nil {
-					typeInfo.type = JsonCommon.getClassFromProperty(key, fromInstance: object)
-				}
-				
-				if JsonCommon.isToCallManualBlock(key, inConfig: config) {
-					guard let block = config!.fieldManualParsing[key] else { continue }
-					let jsonValue = block(value as AnyObject, key)
-					jsonObject[key] = jsonValue
-				} else if JsonCommon.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
-					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
-					let jsonValue = block(value as AnyObject, key)
-					jsonObject[key] = jsonValue
-				} else if JsonCommon.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray {
-					jsonObject[key] = value as AnyObject?
-				} else if JsonCommon.isPrimitiveType(typeInfo.typeName) {
-					jsonObject[key] = value as AnyObject?
-				} else if JsonCommon.isDateType(typeInfo.typeName) {
-					jsonObject[key] = JsonCommon.stringValueToDateAutomatic(value as? String) as AnyObject?
-				} else {
-					if value is NSNull || value == nil {
-						jsonObject[key] = NSNull()
-					} else if value is NSObject {
-						if typeInfo.isArray {
-							let jArray = self.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
-							jsonObject[key] = jArray as AnyObject?
-						} else {
-							let jObj = self.jsonObject(fromObject: value as! NSObject)
-							jsonObject[key] = jObj as AnyObject?
-						}
-					}
-				}
-			}
-			cls = cls?.superclassMirror
+	fileprivate func setupCommons() {
+		self.commons.valueBlock = { (instance: AnyObject, value, key) -> AnyObject? in
+			return (instance as! NSObject).value(forKey: key) as AnyObject
 		}
 		
-		return jsonObject
+		self.commons.primitiveValueBlock = { (instance, value, key) -> Void in
+			instance.setValue(value, forKey: key)
+		}
+		
+		self.commons.manualValueBlock = { (instance, value, key) -> Void in
+			instance.setValue(value, forKey: key)
+		}
+		
+		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
+			let jsonObject = self?.commons.write(fromObject: value!)
+			instance.setValue(jsonObject, forKey: key)
+		}
+		
+		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
+			let jsonArray = self?.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
+			instance.setValue(jsonArray, forKey: key)
+		}
 	}
 	
-	fileprivate class func jsonArray(fromObjects objects: [AnyObject], withTypeInfo typeInfo: TypeInfo) -> AnyObject {
-		if JsonCommon.isPrimitiveType(typeInfo.typeName) {
+	fileprivate func unsetupCommons() {
+		commons.primitiveValueBlock = nil
+		commons.manualValueBlock = nil
+		commons.objectValueBlock = nil
+		commons.arrayValueBlock = nil
+	}
+	
+	fileprivate func jsonArray(fromObjects objects: [AnyObject], withTypeInfo typeInfo: TypeInfo) -> AnyObject {
+		if self.commons.isPrimitiveType(typeInfo.typeName) {
 			return objects as AnyObject
 		}
 		
 		var jsonArray = [AnyObject]()
 		
 		for obj in objects {
-			let jObj = self.jsonObject(fromObject: obj as! NSObject)
+			let jObj = self.commons.write(fromObject: obj as! NSObject)
 			jsonArray.append(jObj as AnyObject)
 		}
 		
