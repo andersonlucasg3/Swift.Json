@@ -10,12 +10,14 @@ import Foundation
 
 internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bool, isArray: Bool)
 
+internal typealias ValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> AnyObject?)
 internal typealias PrimitiveValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> Void)
 internal typealias ManualValueBlock = PrimitiveValueBlock
-internal typealias ArrayValueBlock = ((_ instance: inout AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
+internal typealias ArrayValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
 internal typealias ObjectValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
 
 internal class JsonCommon {
+	var valueBlock: ValueBlock?
 	var primitiveValueBlock: PrimitiveValueBlock?
 	var manualValueBlock: ManualValueBlock?
 	var arrayValueBlock: ArrayValueBlock?
@@ -106,12 +108,12 @@ internal class JsonCommon {
 		return nil
 	}
 	
-	internal func populate(instance: inout AnyObject, withJsonObject jsonObject: [String: AnyObject], withConfig config: JsonConfig? = nil) {
+	internal func populate(instance: AnyObject, withObject object: AnyObject, withConfig config: JsonConfig? = nil) {
 		var cls: Mirror? = Mirror(reflecting: instance)
 		while cls != nil {
 			for child in cls!.children {
 				let key = child.label!
-				let jsonValue = jsonObject[key]
+				let value = self.valueBlock?(instance, object, key)
 				
 				let propertyType = type(of: child.value)
 				var typeInfo = self.parseTypeString("\(propertyType)")
@@ -121,58 +123,80 @@ internal class JsonCommon {
 				}
 				
 				if self.isToCallManualBlock(key, inConfig: config) {
-					
 					guard let block = config!.fieldManualParsing[key] else { continue }
-					let object = block(jsonValue!, key)
-//					instance.setValue(object, forKey: key)
+					let object = block(value!, key)
 					self.manualValueBlock?(instance, object, key)
-					
 				} else if self.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
-					
 					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
-					let object = block(jsonValue!, key)
-//					instance.setValue(object, forKey: key)
+					let object = block(value!, key)
 					self.manualValueBlock?(instance, object, key)
-					
 				} else if (self.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray) {
-					
-					if typeInfo.isOptional || jsonValue != nil {
-//						self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
-						self.arrayValueBlock?(&instance, typeInfo, jsonValue, key)
+					if typeInfo.isOptional || value != nil {
+						self.arrayValueBlock?(instance, typeInfo, value, key)
 					}
-					
 				} else if self.isPrimitiveType(typeInfo.typeName) {
-					
-					if typeInfo.isOptional || jsonValue != nil {
-//						instance.setValue(jsonValue, forKey: key)
-						self.primitiveValueBlock?(instance, jsonValue, key)
+					if typeInfo.isOptional || value != nil {
+						self.primitiveValueBlock?(instance, value, key)
 					}
-					
-//				} else if self.isDateType(typeInfo.typeName) {
-//					
-//					if typeInfo.isOptional || jsonValue != nil {
-//						let date = self.stringValueToDateAutomatic(jsonValue as? String)
-////						instance.setValue(date, forKey: key)
-//						self.primitiveValueBlock?(instance, jsonValue, key)
-//					}
-//					
 				} else {
-					if jsonValue != nil {
-						if typeInfo.isArray {
-//							self.populateArray(forKey: key, intoInstance: &instance, withTypeInfo: typeInfo, withJsonArray: jsonValue as! [AnyObject])
-							self.arrayValueBlock?(&instance, typeInfo, jsonValue, key)
-						} else {
-//							self.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonObject: jsonValue as! [String: AnyObject])
-							self.objectValueBlock?(instance, typeInfo, jsonValue, key)
-						}
-					} else {
-//						instance.setValue(nil, forKey: key)
+					if value is NSNull || value == nil {
 						self.primitiveValueBlock?(instance, nil, key)
+					} else if value != nil {
+						if typeInfo.isArray {
+							self.arrayValueBlock?(instance, typeInfo, value, key)
+						} else {
+							self.objectValueBlock?(instance, typeInfo, value, key)
+						}
 					}
 				}
 			}
-			
 			cls = cls?.superclassMirror
 		}
+	}
+	
+	internal func write(fromObject object: AnyObject, withConfig config: JsonConfig? = nil) -> [String: AnyObject] {
+		let jsonObject = NSMutableDictionary() as AnyObject
+		
+		var cls: Mirror? = Mirror(reflecting: object)
+		while (cls != nil) {
+			for child in cls!.children {
+				guard let key = child.label else { continue }
+				let value: AnyObject? = self.valueBlock?(object, nil, key)
+				
+				let propertyType = type(of: child.value)
+				var typeInfo = self.parseTypeString("\(propertyType)")
+				
+				if typeInfo.type == nil {
+					typeInfo.type = self.getClassFromProperty(key, fromInstance: object)
+				}
+				
+				if self.isToCallManualBlock(key, inConfig: config) {
+					guard let block = config!.fieldManualParsing[key] else { continue }
+					let jsonValue = block(value as AnyObject, key)
+					self.manualValueBlock?(jsonObject as AnyObject, jsonValue, key)
+				} else if self.isToCallManualBlock(typeInfo.typeName, inConfig: config) {
+					guard let block = config!.dataTypeManualParsing[typeInfo.typeName] else { continue }
+					let jsonValue = block(value as AnyObject, key)
+					self.manualValueBlock?(jsonObject as AnyObject, jsonValue, key)
+				} else if self.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray {
+					self.primitiveValueBlock?(jsonObject as AnyObject, value, key)
+				} else if self.isPrimitiveType(typeInfo.typeName) {
+					self.primitiveValueBlock?(jsonObject as AnyObject, value, key)
+				} else {
+					if value is NSNull || value == nil {
+						self.primitiveValueBlock?(jsonObject as AnyObject, NSNull(), key)
+					} else if value is NSObject {
+						if typeInfo.isArray {
+							self.arrayValueBlock?(jsonObject, typeInfo, value, key)
+						} else {
+							self.objectValueBlock?(jsonObject, typeInfo, value, key)
+						}
+					}
+				}
+			}
+			cls = cls?.superclassMirror
+		}
+		
+		return jsonObject as! [String: AnyObject]
 	}
 }
