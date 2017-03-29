@@ -44,6 +44,7 @@
 		71026D0B1E77066900B313F7 /* Swift.Json.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Swift.Json.podspec; sourceTree = "<group>"; };
 		71026D0C1E7713FE00B313F7 /* JsonWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonWriter.swift; sourceTree = "<group>"; };
 		71026D0F1E77308000B313F7 /* JsonCommon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonCommon.swift; sourceTree = "<group>"; };
+		7189B6751E8C518B009B2349 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				71026D0B1E77066900B313F7 /* Swift.Json.podspec */,
+				7189B6751E8C518B009B2349 /* README.md */,
 				71026CED1E77024900B313F7 /* Swift.Json */,
 				71026CF81E77024A00B313F7 /* Swift.JsonTests */,
 				71026CEC1E77024900B313F7 /* Products */,
