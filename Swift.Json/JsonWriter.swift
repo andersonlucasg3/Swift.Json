@@ -12,6 +12,10 @@ import Foundation
 public class JsonWriter {
 	fileprivate let commons: JsonCommon = JsonCommon()
 	
+	public init() {
+		
+	}
+	
 	/// Writes a json formatted string from a Swift class object.
 	///
 	/// - Parameter anyObject: instance of an object to be written.

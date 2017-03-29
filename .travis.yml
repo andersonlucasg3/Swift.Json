@@ -1,7 +1,5 @@
 language: objective-c
+osx_image: xcode8.3
 
 script:
-- xcodebuild clean -project Swift.Json.xcodeproj -scheme SwiftJson build
-
-after_success:
-- bash <(curl -s https://codecov.io/bash)
+- xcodebuild clean build test -project "Swift.Json.xcodeproj" -scheme SwiftJson -sdk iphonesimulator10.3 -destination "OS=10.3,name=iPhone SE" ONLY_ACTIVE_ARCH=NO
