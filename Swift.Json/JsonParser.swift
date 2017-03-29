@@ -11,6 +11,11 @@ import Foundation
 /// JsonParser class for parsing json strings into structured objects. 
 public class JsonParser {
 	fileprivate let commons: JsonCommon = JsonCommon()
+	
+	public init() {
+		
+	}
+	
 	/// Parses a string to the expected generic type populating an object instance mapped to the json string.
 	///
 	/// - Parameters:
