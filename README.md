@@ -31,7 +31,8 @@ boss.name = "Steve James Apple Orange Juice"
 boss.age = 65
 boss.employees?.append(employee1)
 
-let jsonString: String = JsonWriter.write(boss)
+let writer = JsonWriter()
+let jsonString: String = writer.write(boss)
 ```
 
 ###### Parsing example:
@@ -40,7 +41,8 @@ Obs: Using the same classes from above.
 ```swift
 let jsonString: String = // json string
 
-let boss: Boss = JsonParser.parse(string: jsonString)
+let parser = JsonParser()
+let boss: Boss = parser.parse(string: jsonString)
 
 assert(boss.name == "Steve James Apple Orange Juice")
 assert(boss.age == 65)
