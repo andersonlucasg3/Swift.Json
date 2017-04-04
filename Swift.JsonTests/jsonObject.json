@@ -10,5 +10,19 @@
 		"name": "Thiago N.",
 		"age": 55,
 		"bad": true
-	}
+	},
+	"employees": [
+		{
+			"name": "Jorge Xavier",
+			"age": 20
+		},
+		{
+			"name": "Jorge Xavier",
+			"age": 20
+		},
+		{
+			"name": "Jorge Xavier",
+			"age": 20
+		}
+	]
 }
