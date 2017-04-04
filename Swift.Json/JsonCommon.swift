@@ -176,7 +176,7 @@ internal class JsonCommon {
 				let value: AnyObject? = self.valueBlock?(object, nil, key)
 				
 				let propertyType = type(of: child.value)
-				var typeInfo = self.parseTypeString("\(propertyType)")
+				let typeInfo = self.parseTypeString("\(propertyType)")
 				
 				if typeInfo.type == nil {
 					typeInfo.type = self.getClassFromProperty(key, fromInstance: object)
