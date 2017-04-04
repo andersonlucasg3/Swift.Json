@@ -45,6 +45,7 @@ class Swift_JsonTests: XCTestCase {
 		assert(testObject?.boss?.name == "Thiago N.")
 		assert(testObject?.boss?.age == 55)
 		assert(testObject?.boss?.bad == true)
+		assert(testObject!.employees!.count > 0)
 	}
 	
 	func testJsonWriter() {
@@ -134,6 +135,7 @@ class TestObject : NSObject {
 	fileprivate(set) dynamic var height: Float = 0
 	fileprivate(set) dynamic var employee: Employee?
 	fileprivate(set) dynamic var boss: Boss?
+	fileprivate(set) dynamic var employees: [Employee]?
 	
 	required override init() {
 		super.init()
