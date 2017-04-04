@@ -46,6 +46,7 @@ class Swift_JsonTests: XCTestCase {
 		assert(testObject?.boss?.age == 55)
 		assert(testObject?.boss?.bad == true)
 		assert(testObject!.employees!.count > 0)
+		assert(testObject!.employees![0].name == "Jorge Xavier")
 	}
 	
 	func testJsonWriter() {
@@ -111,7 +112,7 @@ class Swift_JsonTests: XCTestCase {
 	}
 }
 
-class Employee: NSObject {
+@objc(Employee) class Employee: NSObject {
 	fileprivate(set) dynamic var name: String = ""
 	fileprivate(set) dynamic var age: Int = 0
 	
