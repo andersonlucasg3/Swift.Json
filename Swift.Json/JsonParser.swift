@@ -82,7 +82,8 @@ public class JsonParser {
 				array.append(item)
 			} else {
 				let cls: AnyClass? = NSClassFromString(typeInfo.typeName)
-				let inst: AnyObject = self.getInstance(forType: (cls ?? typeInfo.type) as! NSObject.Type)
+				assert(cls != nil, "Could not convert class name \(typeInfo.typeName) to AnyClass instance. Please add @objc(\(typeInfo.typeName)) to your class definition.")
+				let inst: AnyObject = self.getInstance(forType: cls as! NSObject.Type)
 				commons.populate(instance: inst, withObject: item)
 				array.append(inst)
 			}
