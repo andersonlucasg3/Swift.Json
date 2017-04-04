@@ -81,7 +81,8 @@ public class JsonParser {
 			if commons.isPrimitiveType(typeInfo.typeName) {
 				array.append(item)
 			} else {
-				let inst: AnyObject = self.getInstance(forType: NSClassFromString(typeInfo.typeName) as! NSObject.Type)
+				let cls: AnyClass? = NSClassFromString(typeInfo.typeName)
+				let inst: AnyObject = self.getInstance(forType: (cls ?? typeInfo.type) as! NSObject.Type)
 				commons.populate(instance: inst, withObject: item)
 				array.append(inst)
 			}
