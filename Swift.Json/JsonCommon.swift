@@ -8,13 +8,25 @@
 
 import Foundation
 
-internal typealias TypeInfo = (type: AnyClass?, typeName: String, isOptional: Bool, isArray: Bool)
-
 internal typealias ValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> AnyObject?)
 internal typealias PrimitiveValueBlock = ((_ instance: AnyObject, _ value: AnyObject?, _ key: String) -> Void)
 internal typealias ManualValueBlock = PrimitiveValueBlock
 internal typealias ArrayValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
 internal typealias ObjectValueBlock = ((_ instance: AnyObject, _ typeInfo: TypeInfo, _ value: AnyObject?, _ key: String) -> Void)
+
+internal class TypeInfo {
+	var type: AnyClass?
+	var typeName: String = ""
+	var isOptional: Bool = false
+	var isArray: Bool = false
+	
+	init(_ type: AnyClass?, _ typeName: String, _ isOptional: Bool, _ isArray: Bool) {
+		self.type = type
+		self.typeName = typeName
+		self.isOptional = isOptional
+		self.isArray = isArray
+	}
+}
 
 internal class JsonCommon {
 	var valueBlock: ValueBlock?
@@ -88,7 +100,7 @@ internal class JsonCommon {
 			classType = NSClassFromString(typeString)
 		}
 		
-		return (type: classType, typeName: typeString, isOptional: isOptional, isArray: isArray)
+		return TypeInfo(classType, typeString, isOptional, isArray)
 	}
 	
 	internal func getClassFromProperty(_ name: String, fromInstance instance: AnyObject) -> AnyClass? {
@@ -116,7 +128,7 @@ internal class JsonCommon {
 				let value = self.valueBlock?(instance, object, key)
 				
 				let propertyType = type(of: child.value)
-				var typeInfo = self.parseTypeString("\(propertyType)")
+				let typeInfo = self.parseTypeString("\(propertyType)")
 				
 				if typeInfo.type == nil {
 					typeInfo.type = self.getClassFromProperty(key, fromInstance: instance)
@@ -164,7 +176,7 @@ internal class JsonCommon {
 				let value: AnyObject? = self.valueBlock?(object, nil, key)
 				
 				let propertyType = type(of: child.value)
-				var typeInfo = self.parseTypeString("\(propertyType)")
+				let typeInfo = self.parseTypeString("\(propertyType)")
 				
 				if typeInfo.type == nil {
 					typeInfo.type = self.getClassFromProperty(key, fromInstance: object)
