@@ -175,6 +175,10 @@ internal class JsonCommon {
 				guard let key = child.label else { continue }
 				let value: AnyObject? = self.valueBlock?(object, nil, key)
 				
+				if !(config?.shouldIncludeNullValueKeys ?? true) && (value == nil || value is NSNull) {
+					continue
+				}
+				
 				let propertyType = type(of: child.value)
 				let typeInfo = self.parseTypeString("\(propertyType)")
 				

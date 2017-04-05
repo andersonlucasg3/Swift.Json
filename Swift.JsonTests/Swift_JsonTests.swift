@@ -110,10 +110,34 @@ class Swift_JsonTests: XCTestCase {
 		assert(testObject.boss?.employees?[1].name == employees[1]["name"] as? String)
 		assert(testObject.boss?.employees?[1].age == employees[1]["age"] as? Int)
 	}
+	
+	func testWriterWithNullField() {
+		let config = JsonConfig()
+		config.shouldIncludeNullValueKeys = false
+		
+		let testObject = TestObject()
+		
+		let writer = JsonWriter()
+		var jsonString = writer.write(anyObject: testObject, withConfig: config)
+		
+		var dic = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: JSONSerialization.ReadingOptions.allowFragments) as! [String: AnyObject]
+		
+		assert(!dic.keys.contains("employee"))
+		assert(!dic.keys.contains("boss"))
+		assert(!dic.keys.contains("employees"))
+		
+		testObject.employee = Employee()
+		
+		jsonString = writer.write(anyObject: testObject, withConfig: config)
+		
+		dic = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: JSONSerialization.ReadingOptions.allowFragments) as! [String: AnyObject]
+		
+		assert(!(dic["employee"] as! Dictionary<String, AnyObject>).keys.contains("name"))
+	}
 }
 
 @objc(Employee) class Employee: NSObject {
-	fileprivate(set) dynamic var name: String = ""
+	fileprivate(set) dynamic var name: String?
 	fileprivate(set) dynamic var age: Int = 0
 	
 	required override init() {
