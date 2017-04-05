@@ -16,6 +16,9 @@ public class JsonConfig {
 	internal var fieldManualParsing: [String: JsonConvertBlock] = Dictionary()
 	internal var dataTypeManualParsing: [String: JsonConvertBlock] = Dictionary()
 	
+	/// Should the json writer include null values, e.g.: { "client": null }
+	public var includeNullValuesKeys: Bool = false
+	
 	public init() {
 		
 	}
