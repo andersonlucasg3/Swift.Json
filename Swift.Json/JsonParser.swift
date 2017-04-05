@@ -25,7 +25,17 @@ public class JsonParser {
 	public func parse<T: NSObject>(string: String, withConfig config: JsonConfig? = nil) -> T? {
 		let options = JSONSerialization.ReadingOptions(rawValue: 0)
 		guard let data = string.data(using: .utf8) else { return nil }
-		guard let jsonObject = try! JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject] else { return nil }
+		var jsonObject: [String: AnyObject]?
+		
+		do {
+			jsonObject = try JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject]
+		} catch let error as NSError {
+			print("JsonParser error: \(error)")
+			return nil
+		} catch {
+			print("JsonParser error: something went wrong with the json parsing, check the json contents: \n\(string)")
+			return nil
+		}
 	
 		self.setupCommons()
 		
