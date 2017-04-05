@@ -18,12 +18,14 @@ public class JsonWriter {
 	
 	/// Writes a json formatted string from a Swift class object.
 	///
-	/// - Parameter anyObject: instance of an object to be written.
+	/// - Parameters:
+	///   - anyObject: instance of an object to be written.
+	///   - config: optional parameter with custom writing configs
 	/// - Returns: a String of json formatted representation of the anyObject.
-	public func write<T : NSObject>(anyObject: T) -> String? {
-		self.setupCommons()
+	public func write<T : NSObject>(anyObject: T, withConfig config: JsonConfig? = nil) -> String? {
+		self.setupCommons(withConfig: config)
 		
-		let jsonObject = self.commons.write(fromObject: anyObject)
+		let jsonObject = self.commons.write(fromObject: anyObject, withConfig: config)
 		
 		self.unsetupCommons()
 		
@@ -31,7 +33,7 @@ public class JsonWriter {
 		return String(data: data, encoding: .utf8)
 	}
 	
-	fileprivate func setupCommons() {
+	fileprivate func setupCommons(withConfig config: JsonConfig? = nil) {
 		self.commons.valueBlock = { (instance: AnyObject, value, key) -> AnyObject? in
 			return (instance as! NSObject).value(forKey: key) as AnyObject
 		}
@@ -45,7 +47,7 @@ public class JsonWriter {
 		}
 		
 		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			let jsonObject = self?.commons.write(fromObject: value!)
+			let jsonObject = self?.commons.write(fromObject: value!, withConfig: config)
 			instance.setValue(jsonObject, forKey: key)
 		}
 		
@@ -62,7 +64,7 @@ public class JsonWriter {
 		commons.arrayValueBlock = nil
 	}
 	
-	fileprivate func jsonArray(fromObjects objects: [AnyObject], withTypeInfo typeInfo: TypeInfo) -> AnyObject {
+	fileprivate func jsonArray(fromObjects objects: [AnyObject], withTypeInfo typeInfo: TypeInfo, withConfig config: JsonConfig? = nil) -> AnyObject {
 		if self.commons.isPrimitiveType(typeInfo.typeName) {
 			return objects as AnyObject
 		}
@@ -70,7 +72,7 @@ public class JsonWriter {
 		var jsonArray = [AnyObject]()
 		
 		for obj in objects {
-			let jObj = self.commons.write(fromObject: obj as! NSObject)
+			let jObj = self.commons.write(fromObject: obj as! NSObject, withConfig: config)
 			jsonArray.append(jObj as AnyObject)
 		}
 		
