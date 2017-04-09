@@ -1,8 +1,7 @@
 import PackageDescription
 
 let package = Package(
-	name: "Swift.Json",
+	name: "SwiftJson",
 	dependencies: [
-		"Swift.Json"
 	]
 )
