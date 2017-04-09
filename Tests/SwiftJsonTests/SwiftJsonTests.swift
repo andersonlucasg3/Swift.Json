@@ -1,5 +1,5 @@
 //
-//  Swift_JsonTests.swift
+//  SwiftJsonTests.swift
 //  Swift.JsonTests
 //
 //  Created by Anderson Lucas C. Ramos on 13/03/17.
@@ -21,6 +21,7 @@ class Swift_JsonTests: XCTestCase {
         super.tearDown()
     }
 
+	#if Xcode
 	func testJsonParser() {
 		let jsonString = try! String(contentsOfFile: Bundle(for: self.classForCoder).path(forResource: "jsonObject", ofType: "json")!)
 		
@@ -48,6 +49,7 @@ class Swift_JsonTests: XCTestCase {
 		assert(testObject!.employees!.count > 0)
 		assert(testObject!.employees![0].name == "Jorge Xavier")
 	}
+	#endif
 	
 	func testJsonWriter() {
 		let testObject = TestObject()
