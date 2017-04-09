@@ -17,7 +17,6 @@
 		71026D0E1E77140800B313F7 /* JsonWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0C1E7713FE00B313F7 /* JsonWriter.swift */; };
 		71026D101E77308000B313F7 /* JsonCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0F1E77308000B313F7 /* JsonCommon.swift */; };
 		71026D111E7732E100B313F7 /* JsonCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71026D0F1E77308000B313F7 /* JsonCommon.swift */; };
-		71E3DC961E99DABF0006571C /* LinuxMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71E3DC951E99DABF0006571C /* LinuxMain.swift */; };
 		C7A8E05F6A598A4338C94496 /* SwiftJsonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A8EEFDDE4935621EDDB27F /* SwiftJsonTests.swift */; };
 		C7A8E7B3B5A64980F8E4DB6C /* jsonObject.json in Resources */ = {isa = PBXBuildFile; fileRef = C7A8E7D5559192A874CC9EF8 /* jsonObject.json */; };
 /* End PBXBuildFile section */
@@ -268,7 +267,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				71E3DC961E99DABF0006571C /* LinuxMain.swift in Sources */,
 				71026D0D1E7713FE00B313F7 /* JsonWriter.swift in Sources */,
 				71026D071E77028700B313F7 /* JsonConfig.swift in Sources */,
 				71026D101E77308000B313F7 /* JsonCommon.swift in Sources */,
