@@ -136,6 +136,13 @@ class Swift_JsonTests: XCTestCase {
 		
 		assert(!(dic["employee"] as! Dictionary<String, AnyObject>).keys.contains("name"))
 	}
+	
+	func testJsonWithNSNull() {
+		let jsonString = "{ \"name\": null, \"age\": null }"
+		let employee: Employee? = JsonParser().parse(string: jsonString)
+		
+		assert(employee?.name == nil)
+	}
 }
 
 @objc(Employee) class Employee: NSObject {
