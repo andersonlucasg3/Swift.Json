@@ -124,6 +124,10 @@ internal class JsonCommon {
 		return value != nil && !(value is NSNull)
 	}
 	
+	fileprivate func canSetValue(typeInfo: TypeInfo, value: AnyObject?) -> Bool {
+		return (typeInfo.isOptional && !self.isNotNil(value: value)) || self.isNotNil(value: value)
+	}
+	
 	internal func populate(instance: AnyObject, withObject object: AnyObject, withConfig config: JsonConfig? = nil) {
 		var cls: Mirror? = Mirror(reflecting: instance)
 		while cls != nil {
@@ -147,15 +151,15 @@ internal class JsonCommon {
 					let object = block(value!, key)
 					self.manualValueBlock?(instance, object, key)
 				} else if (self.isPrimitiveType(typeInfo.typeName) && typeInfo.isArray) {
-					if typeInfo.isOptional || self.isNotNil(value: value) {
+					if self.canSetValue(typeInfo: typeInfo, value: value) {
 						self.arrayValueBlock?(instance, typeInfo, value, key)
 					}
 				} else if self.isPrimitiveType(typeInfo.typeName) {
-					if typeInfo.isOptional || self.isNotNil(value: value) {
+					if self.canSetValue(typeInfo: typeInfo, value: value) {
 						self.primitiveValueBlock?(instance, value, key)
 					}
 				} else {
-					if !self.isNotNil(value: value) && typeInfo.isOptional {
+					if typeInfo.isOptional && !self.isNotNil(value: value) {
 						self.primitiveValueBlock?(instance, nil, key)
 					} else if self.isNotNil(value: value) {
 						if typeInfo.isArray {
