@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
     spec.name                   = 'Swift.Json'
-    spec.version                = '1.2.3'
+    spec.version                = '1.2.4'
     spec.summary                = 'Json auto-[parser/writer] for Swift 3.'
 
     spec.homepage               = 'https://github.com/andersonlucasg3/Swift.Json'
