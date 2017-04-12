@@ -125,7 +125,7 @@ internal class JsonCommon {
 	}
 	
 	fileprivate func canSetValue(typeInfo: TypeInfo, value: AnyObject?) -> Bool {
-		return (typeInfo.isOptional && !self.isNotNil(value: value)) || self.isNotNil(value: value)
+		return (typeInfo.isOptional && type(of: value) == typeInfo.type) || self.isNotNil(value: value)
 	}
 	
 	internal func populate(instance: AnyObject, withObject object: AnyObject, withConfig config: JsonConfig? = nil) {
