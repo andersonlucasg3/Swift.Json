@@ -23,29 +23,62 @@ public class JsonParser {
 	///   - config: optional parameter with custom parsing configs
 	/// - Returns: The object populated with the values from the json string.
 	public func parse<T: NSObject>(string: String, withConfig config: JsonConfig? = nil) -> T? {
-		let options = JSONSerialization.ReadingOptions(rawValue: 0)
 		guard let data = string.data(using: .utf8) else { return nil }
-		var jsonObject: [String: AnyObject]?
-		
-		do {
-			jsonObject = try JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject]
-		} catch let error as NSError {
-			print("JsonParser error: \(error)")
-			return nil
-		} catch {
-			print("JsonParser error: something went wrong with the json parsing, check the json contents: \n\(string)")
-			return nil
-		}
-	
-		self.setupCommons()
-		
-		let instance: AnyObject = (getInstance() as T) as AnyObject
-		self.commons.populate(instance: instance, withObject: jsonObject as AnyObject, withConfig: config)
-		
-		self.unsetupCommons()
-		
-		return instance as? T
+		var instance: T = (getInstance() as T)
+        self.parse(data: data, into: &instance, withConfig: config)
+        return instance
 	}
+    
+    /// Parses a Data to the expected generic type populating an object instance mapped to the json Data.
+    ///
+    /// - Parameters:
+    ///   - data: the json Data
+    ///   - config: optional parameter with custom parsing configs
+    /// - Returns: The object populated with the values from the json Data.
+    public func parse<T : NSObject>(data: Data, withConfig config: JsonConfig? = nil) -> T? {
+        var instance: T = (getInstance() as T)
+        self.parse(data: data, into: &instance, withConfig: config)
+        return instance
+    }
+    
+    /// Parses a string to the expected generic type populating an object instance mapped to the json string.
+    ///
+    /// - Parameters:
+    ///   - string: the json string
+    ///   - config: optional parameter with custom parsing configs
+    /// - Returns: The object populated with the values from the json string.
+    public func parse<T: NSObject>(string: String, into object: inout T, withConfig config: JsonConfig? = nil) {
+        guard let data = string.data(using: .utf8) else { return }
+        self.parse(data: data, into: &object, withConfig: config)
+    }
+    
+    /// Parses a Data to the expected generic type populating an object instance mapped to the json Data.
+    ///
+    /// - Parameters:
+    ///   - data: the json Data
+    ///   - config: optional parameter with custom parsing configs
+    /// - Returns: The object populated with the values from the json Data.
+    public func parse<T: NSObject>(data: Data, into object: inout T, withConfig config: JsonConfig? = nil) {
+        guard let jsonObject = self.getJsonDict(data) else { return }
+        self.setupCommons()
+        self.commons.populate(instance: object, withObject: jsonObject as AnyObject, withConfig: config)
+        self.unsetupCommons()
+    }
+    
+    fileprivate func getJsonDict(_ data: Data) -> [String: AnyObject]? {
+        let options = JSONSerialization.ReadingOptions(rawValue: 0)
+        var jsonObject: [String: AnyObject]?
+        do {
+            jsonObject = try JSONSerialization.jsonObject(with: data, options: options) as? [String: AnyObject]
+        } catch let error as NSError {
+            print("JsonParser error: \(error)")
+            return nil
+        } catch {
+            print("JsonParser error: something went wrong with the json parsing, check the json contents")
+            return nil
+        }
+        return jsonObject
+    }
 	
 	fileprivate func setupCommons() {
 		self.commons.valueBlock = { (instance, value, key) -> AnyObject? in

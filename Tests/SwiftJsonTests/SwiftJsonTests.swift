@@ -60,7 +60,7 @@ class Swift_JsonTests: XCTestCase {
 		testObject.employee?.age = 35
 		
 		let writer = JsonWriter()
-		let jsonString = writer.write(anyObject: testObject)
+        let jsonString: String? = writer.write(anyObject: testObject)
 		
 		let jsonObject = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: .allowFragments) as! [String: AnyObject]
 		
@@ -93,9 +93,9 @@ class Swift_JsonTests: XCTestCase {
 		testObject.boss?.employees?.append(emp2)
 		
 		let writer = JsonWriter()
-		let jsonString = writer.write(anyObject: testObject)
+        let jsonData: Data? = writer.write(anyObject: testObject)
 		
-		let jsonObject = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: .allowFragments) as! [String: AnyObject]
+		let jsonObject = try! JSONSerialization.jsonObject(with: jsonData!, options: .allowFragments) as! [String: AnyObject]
 		
 		assert(testObject.name == jsonObject["name"] as? String)
 		assert(testObject.age == jsonObject["age"] as? Int)
@@ -120,7 +120,7 @@ class Swift_JsonTests: XCTestCase {
 		let testObject = TestObject()
 		
 		let writer = JsonWriter()
-		var jsonString = writer.write(anyObject: testObject, withConfig: config)
+        var jsonString: String? = writer.write(anyObject: testObject, withConfig: config)
 		
 		var dic = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: JSONSerialization.ReadingOptions.allowFragments) as! [String: AnyObject]
 		
