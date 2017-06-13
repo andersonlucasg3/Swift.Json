@@ -23,15 +23,22 @@ public class JsonWriter {
 	///   - config: optional parameter with custom writing configs
 	/// - Returns: a String of json formatted representation of the anyObject.
 	public func write<T : NSObject>(anyObject: T, withConfig config: JsonConfig? = nil) -> String? {
-		self.setupCommons(withConfig: config)
-		
-		let jsonObject = self.commons.write(fromObject: anyObject, withConfig: config)
-		
-		self.unsetupCommons()
-		
-		guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0)) else { return nil }
+        guard let data: Data = self.write(anyObject: anyObject, withConfig: config) else { return nil }
 		return String(data: data, encoding: .utf8)
 	}
+    
+    /// Writes a json formatted data from a Swift class object.
+    ///
+    /// - Parameters:
+    ///   - anyObject: instance of an object to be written.
+    ///   - config: optional parameter with custom writing configs
+    /// - Returns: a Data of json formatted representation of the anyObject.
+    public func write<T : NSObject>(anyObject: T, withConfig config: JsonConfig? = nil) -> Data? {
+        self.setupCommons(withConfig: config)
+        let jsonObject = self.commons.write(fromObject: anyObject, withConfig: config)
+        self.unsetupCommons()
+        return try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0))
+    }
 	
 	fileprivate func setupCommons(withConfig config: JsonConfig? = nil) {
 		self.commons.valueBlock = { (instance: AnyObject, value, key) -> AnyObject? in
