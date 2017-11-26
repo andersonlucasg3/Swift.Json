@@ -104,10 +104,9 @@ internal class JsonCommon {
 	}
 	
 	internal func getClassFromProperty(_ name: String, fromInstance instance: AnyObject) -> AnyClass? {
-		let charArray = NSString(string: name).utf8String
-		
 		let instanceClass: AnyClass? = instance.classForCoder
-		guard let property = class_getProperty(instanceClass, charArray) else { return nil }
+		guard let charArray = NSString(string: name).utf8String,
+            let property = class_getProperty(instanceClass, charArray) else { return nil }
 		guard let attributes = property_getAttributes(property) else { return nil }
 		
 		let attributeString = String(cString: attributes)

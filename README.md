@@ -4,9 +4,9 @@
 Json auto-parsing for Swift.
 
 ##### Examples
-For using the JsonParser and JsonWriter classes you just need to declare your swift classes where all the properties are `dynamic` and the class **MUST** extend from `NSObject`.
-Other thing is that `Obj-c` representable objects may be optional, but non `obj-c` representable objects **MUST** be defined non optional.
-But the `dynamic` diretive will obligate you to define it right.
+For using the JsonParser and JsonWriter classes you just need to declare your swift classes where all the properties are `@objc dynamic` and the class **MUST** extend from `NSObject`.
+Other thing is that `Obj-c` representable objects may be optional, but non `Obj-c` representable objects **MUST** be defined non optional.
+But the `@objc dynamic` diretive will obligate you to define it right.
 
 ###### Writing example:
 Example of the implementation for converting objects to string.
@@ -14,12 +14,12 @@ Example of the implementation for converting objects to string.
 import Swift_Json // very important
 
 class Employee: NSObject {
-    fileprivate(set) dynamic var name: String?
-    fileprivate(set) dynamic var age: Int = 0
+    @objc fileprivate(set) dynamic var name: String?
+    @objc fileprivate(set) dynamic var age: Int = 0
 }
 
 class Boss: Employee {
-    fileprivate(set) dynamic var employees: [Employee]?
+    @objc fileprivate(set) dynamic var employees: [Employee]?
 }
 
 let employee1: Employee = Employee()

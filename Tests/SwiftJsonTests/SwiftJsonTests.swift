@@ -146,8 +146,8 @@ class Swift_JsonTests: XCTestCase {
 }
 
 @objc(Employee) class Employee: NSObject {
-	fileprivate(set) dynamic var name: String?
-	fileprivate(set) dynamic var age: Int = 0
+    @objc fileprivate(set) dynamic var name: String?
+    @objc fileprivate(set) dynamic var age: Int = 0
 	
 	required override init() {
 		super.init()
@@ -155,8 +155,8 @@ class Swift_JsonTests: XCTestCase {
 }
 
 class Boss : Employee {
-	fileprivate(set) dynamic var bad: Bool = false
-	fileprivate(set) dynamic var employees: [Employee]?
+    @objc fileprivate(set) dynamic var bad: Bool = false
+    @objc fileprivate(set) dynamic var employees: [Employee]?
 	
 	required init() {
 		super.init()
@@ -164,12 +164,12 @@ class Boss : Employee {
 }
 
 class TestObject : NSObject {
-	fileprivate(set) dynamic var name: String?
-	fileprivate(set) dynamic var age: Int = 0
-	fileprivate(set) dynamic var height: Float = 0
-	fileprivate(set) dynamic var employee: Employee?
-	fileprivate(set) dynamic var boss: Boss?
-	fileprivate(set) dynamic var employees: [Employee]?
+    @objc fileprivate(set) dynamic var name: String?
+    @objc fileprivate(set) dynamic var age: Int = 0
+    @objc fileprivate(set) dynamic var height: Float = 0
+    @objc fileprivate(set) dynamic var employee: Employee?
+    @objc fileprivate(set) dynamic var boss: Boss?
+    @objc fileprivate(set) dynamic var employees: [Employee]?
 	
 	required override init() {
 		super.init()
