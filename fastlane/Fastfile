@@ -1,0 +1,26 @@
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.41.0"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+    
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    scan
+  end
+
+  desc "Publish a new version to cocoapods"
+  lane :pod_trunk do
+    test
+    pod_push
+  end
+
+  after_all do |lane|
+    
+  end
+end
