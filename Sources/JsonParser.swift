@@ -77,15 +77,15 @@ public class JsonParser {
     ///   - data: the json Data
     ///   - config: optional parameter with custom parsing configs
     /// - Returns: The array populated with the objects from the json Data.
-    public func parse<T : AnyObject>(data: Data, withConfig config: JsonConfig? = nil) -> [T]? {
-        guard let jsonArray = self.getJsonArray(data) else { return nil }
+    public func parse<T: Any>(data: Data, withConfig config: JsonConfig? = nil) -> [T]? {
         guard !self.commons.isPrimitiveType("\(T.self)") else {
-            return jsonArray as? [T]
+            return self.getJsonArray(data)
         }
+        guard let jsonArray: [[String: AnyObject]] = self.getJsonArray(data) else { return nil }
         self.setupCommons()
         let mapped: [T] = jsonArray.map({
-            let instance: T = (getInstance() as! T)
-            self.commons.populate(instance: instance, withObject: $0 as AnyObject, withConfig: config)
+            let instance: T = (T.self as! NSObject.Type).init() as! T // (getInstance() as! T)
+            self.commons.populate(instance: instance as AnyObject, withObject: $0 as AnyObject, withConfig: config)
             return instance
         })
         self.unsetupCommons()
@@ -98,7 +98,7 @@ public class JsonParser {
     ///   - string: the json String
     ///   - config: optional parameter with custom parsing configs
     /// - Returns: The array populated with the objects from the json String.
-    public func parse<T: AnyObject>(string: String, withConfig config: JsonConfig? = nil) -> [T]? {
+    public func parse<T: Any>(string: String, withConfig config: JsonConfig? = nil) -> [T]? {
         guard let data = string.data(using: .utf8) else { return nil }
         return self.parse(data: data, withConfig: config)
     }
@@ -109,7 +109,7 @@ public class JsonParser {
     ///   - data: the json Data
     ///   - config: optional parameter with custom parsing configs
     /// - Returns: The array populated with the objects from the json Data.
-    public func parse<T: AnyObject>(data: Data, into array: inout [T], withConfig config: JsonConfig? = nil) {
+    public func parse<T: Any>(data: Data, into array: inout [T], withConfig config: JsonConfig? = nil) {
         guard let arrayObjs: [T] = self.parse(data: data, withConfig: config) else { return }
         array.append(contentsOf: arrayObjs)
     }
@@ -120,7 +120,7 @@ public class JsonParser {
     ///   - string: the json String
     ///   - config: optional parameter with custom parsing configs
     /// - Returns: The array populated with the objects from the json String.
-    public func parse<T: AnyObject>(string: String, into array: inout [T], withConfig config: JsonConfig? = nil) {
+    public func parse<T: Any>(string: String, into array: inout [T], withConfig config: JsonConfig? = nil) {
         guard let data = string.data(using: .utf8) else { return }
         self.parse(data: data, into: &array, withConfig: config)
     }
@@ -142,11 +142,11 @@ public class JsonParser {
         return jsonObject
     }
     
-    fileprivate func getJsonArray(_ data: Data) -> [[String: AnyObject]]? {
+    fileprivate func getJsonArray<T: Any>(_ data: Data) -> [T]? {
         let options = JSONSerialization.ReadingOptions(rawValue: 0)
-        var jsonArray: [[String: AnyObject]]?
+        var jsonArray: [T]?
         do {
-            jsonArray = try JSONSerialization.jsonObject(with: data, options: options) as? [[String: AnyObject]]
+            jsonArray = try JSONSerialization.jsonObject(with: data, options: options) as? [T]
         } catch let error as NSError {
             print("JsonParser error: \(error)")
             return nil
@@ -187,7 +187,7 @@ public class JsonParser {
 		commons.arrayValueBlock = nil
 	}
 	
-	fileprivate func getInstance<T : NSObject>() -> T {
+	fileprivate func getInstance<T: NSObject>() -> T {
 		return T()
 	}
 	

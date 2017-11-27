@@ -52,7 +52,7 @@ public class JsonWriter {
     ///   - anyArray: instance of an array to be written.
     ///   - config: optional parameter with custom writing configs
     /// - Returns: a String of json formatted representation of the anyArray.
-    public func write<T: AnyObject>(anyArray: [T], withConfig config: JsonConfig? = nil) -> String? {
+    public func write<T: Any>(anyArray: [T], withConfig config: JsonConfig? = nil) -> String? {
         guard let data: Data = self.write(anyArray: anyArray, withConfig: config) else { return nil }
         return String(data: data, encoding: .utf8)
     }
@@ -63,14 +63,14 @@ public class JsonWriter {
     ///   - anyArray: instance of an array to be written.
     ///   - config: optional parameter with custom writing configs
     /// - Returns: a Data of json formatted representation of the anyArray.
-    public func write<T: AnyObject>(anyArray: [T], withConfig config: JsonConfig? = nil) -> Data? {
+    public func write<T: Any>(anyArray: [T], withConfig config: JsonConfig? = nil) -> Data? {
         guard !self.commons.isPrimitiveType("\(T.self)") else {
             return try? JSONSerialization.data(withJSONObject: anyArray, options: JSONSerialization.WritingOptions(rawValue: 0))
         }
         self.setupCommons(withConfig: config)
         var jsonArray = [[String: AnyObject]]()
-        anyArray.forEach({ anyObject in
-            jsonArray.append(self.commons.write(fromObject: anyObject, withConfig: config))
+        anyArray.forEach({
+            jsonArray.append(self.commons.write(fromObject: $0 as AnyObject, withConfig: config))
         })
         self.unsetupCommons()
         return try? JSONSerialization.data(withJSONObject: jsonArray, options: JSONSerialization.WritingOptions(rawValue: 0))
