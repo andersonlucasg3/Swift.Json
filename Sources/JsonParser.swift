@@ -65,6 +65,24 @@ public class JsonParser {
         self.unsetupCommons()
     }
     
+    /// Parses a Data to the expected generic type populating an array instance mapped to the json Data.
+    ///
+    /// - Parameters:
+    ///   - data: the json Data
+    ///   - config: optional parameter with custom parsing configs
+    /// - Returns: The array populated with the objects from the json Data.
+    public func parse<T: NSObject>(data: Data, withConfig config: JsonConfig? = nil) -> [T]? {
+        guard let jsonArray = self.getJsonArray(data) else { return nil }
+        self.setupCommons()
+        let mapped: [T] = jsonArray.map({
+            let instance: T = (getInstance() as T)
+            self.commons.populate(instance: instance, withObject: $0 as AnyObject, withConfig: config)
+            return instance
+        })
+        self.unsetupCommons()
+        return mapped
+    }
+    
     fileprivate func getJsonDict(_ data: Data) -> [String: AnyObject]? {
         let options = JSONSerialization.ReadingOptions(rawValue: 0)
         var jsonObject: [String: AnyObject]?
@@ -78,6 +96,21 @@ public class JsonParser {
             return nil
         }
         return jsonObject
+    }
+    
+    fileprivate func getJsonArray(_ data: Data) -> [[String: AnyObject]]? {
+        let options = JSONSerialization.ReadingOptions(rawValue: 0)
+        var jsonArray: [[String: AnyObject]]?
+        do {
+            jsonArray = try JSONSerialization.jsonObject(with: data, options: options) as? [[String: AnyObject]]
+        } catch let error as NSError {
+            print("JsonParser error: \(error)")
+            return nil
+        } catch {
+            print("JsonParser error: something went wrong with the json parsing, check the json contents")
+            return nil
+        }
+        return jsonArray
     }
 	
 	fileprivate func setupCommons() {
