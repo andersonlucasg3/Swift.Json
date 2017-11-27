@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Anderson",
+        "age": 25,
+        "height": 1.85,
+        "employee": {
+            "name": "Jorge Xavier",
+            "age": 20
+        },
+        "boss": {
+            "name": "Thiago N.",
+            "age": 55,
+            "bad": true
+        },
+        "employees": [
+            {
+                "name": "Jorge Xavier",
+                "age": 20
+            },
+            {
+                "name": "Jorge Xavier",
+                "age": 20
+            },
+            {
+                "name": "Jorge Xavier",
+                "age": 20
+            }
+        ]
+    },
+    {
+        "name": "Bruna",
+        "age": 24,
+        "height": 1.70,
+        "employee": {
+            "name": "Jorge Xavier",
+            "age": 20
+        },
+        "boss": {
+            "name": "Dentista",
+            "age": 55,
+            "bad": true
+        },
+        "employees": [
+            {
+                "name": "Jorge Xavier",
+                "age": 20
+            }
+        ]
+    }
+]
