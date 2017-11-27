@@ -15,6 +15,8 @@ public class JsonParser {
 	public init() {
 		
 	}
+    
+    // MARK: -- Begin Object Parsers
 	
 	/// Parses a string to the expected generic type populating an object instance mapped to the json string.
 	///
@@ -65,23 +67,65 @@ public class JsonParser {
         self.unsetupCommons()
     }
     
+    // MARK: -- End Object Parsers
+    
+    // MARK: -- Begin Array parsers
+    
     /// Parses a Data to the expected generic type populating an array instance mapped to the json Data.
     ///
     /// - Parameters:
     ///   - data: the json Data
     ///   - config: optional parameter with custom parsing configs
     /// - Returns: The array populated with the objects from the json Data.
-    public func parse<T: NSObject>(data: Data, withConfig config: JsonConfig? = nil) -> [T]? {
+    public func parse<T : AnyObject>(data: Data, withConfig config: JsonConfig? = nil) -> [T]? {
         guard let jsonArray = self.getJsonArray(data) else { return nil }
+        guard !self.commons.isPrimitiveType("\(T.self)") else {
+            return jsonArray as? [T]
+        }
         self.setupCommons()
         let mapped: [T] = jsonArray.map({
-            let instance: T = (getInstance() as T)
+            let instance: T = (getInstance() as! T)
             self.commons.populate(instance: instance, withObject: $0 as AnyObject, withConfig: config)
             return instance
         })
         self.unsetupCommons()
         return mapped
     }
+    
+    /// Parses a String to the expected generic type populating an array instance mapped to the json String.
+    ///
+    /// - Parameters:
+    ///   - string: the json String
+    ///   - config: optional parameter with custom parsing configs
+    /// - Returns: The array populated with the objects from the json String.
+    public func parse<T: AnyObject>(string: String, withConfig config: JsonConfig? = nil) -> [T]? {
+        guard let data = string.data(using: .utf8) else { return nil }
+        return self.parse(data: data, withConfig: config)
+    }
+    
+    /// Parses a Data to the expected generic type populating an array instance mapped to the json Data.
+    ///
+    /// - Parameters:
+    ///   - data: the json Data
+    ///   - config: optional parameter with custom parsing configs
+    /// - Returns: The array populated with the objects from the json Data.
+    public func parse<T: AnyObject>(data: Data, into array: inout [T], withConfig config: JsonConfig? = nil) {
+        guard let arrayObjs: [T] = self.parse(data: data, withConfig: config) else { return }
+        array.append(contentsOf: arrayObjs)
+    }
+    
+    /// Parses a String to the expected generic type populating an array instance mapped to the json String.
+    ///
+    /// - Parameters:
+    ///   - string: the json String
+    ///   - config: optional parameter with custom parsing configs
+    /// - Returns: The array populated with the objects from the json String.
+    public func parse<T: AnyObject>(string: String, into array: inout [T], withConfig config: JsonConfig? = nil) {
+        guard let data = string.data(using: .utf8) else { return }
+        self.parse(data: data, into: &array, withConfig: config)
+    }
+   
+    // MARK: -- End Object Parsers
     
     fileprivate func getJsonDict(_ data: Data) -> [String: AnyObject]? {
         let options = JSONSerialization.ReadingOptions(rawValue: 0)
