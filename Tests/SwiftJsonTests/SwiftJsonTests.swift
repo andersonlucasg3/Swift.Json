@@ -133,6 +133,48 @@ class Swift_JsonTests: XCTestCase {
 		
 		assert(employee?.name == nil)
 	}
+    
+    func testRandom() {
+        func camelCased(_ target: String) -> String {
+            let range = NSMakeRange(0, target.count)
+            let pattern = "[^a-z^A-Z]+(.)"
+            let firstChar = NSMakeRange(0, 1)
+            var nsTarget = NSString(string:target.lowercased())
+            if let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators) {
+                let matches = regex.matches(in: target, options: .reportCompletion, range: range).reversed()
+                for match in matches {
+                    nsTarget = NSString(string:nsTarget.replacingCharacters(in: match.range, with: nsTarget.substring(with: match.range(at:1)).uppercased()))
+                }
+            }
+            return nsTarget.replacingCharacters(in: firstChar, with: nsTarget.substring(with: firstChar).lowercased())
+        }
+        
+        
+        func snakeCased(_ target: String) -> String {
+            let range = NSMakeRange(0, target.count)
+            let pattern = "[^a-z^A-Z]+(.)"
+            let nsTarget = NSMutableString(string:target.lowercased())
+            if let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators) {
+                regex.replaceMatches(in: nsTarget, options: .reportCompletion, range: range, withTemplate: "_$1")
+            }
+            return nsTarget as String
+        }
+        
+        let fields = [
+            "_tipo  -  dois     _um",
+            "tipo_1",
+            "tipo um",
+            "tipo 1",
+            "_tipo-um",
+            " tipo um",
+            "Tipo-Um",
+            "TIPO_UM",
+            "TIPO-UM"
+        ]
+        fields.forEach { (field) in
+            print(camelCased(field)," - ",snakeCased(field))
+        }
+    }
 }
 
 @objc(Employee) class Employee: NSObject {

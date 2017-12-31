@@ -157,16 +157,19 @@ public class JsonParser {
         return jsonArray
     }
 	
-	fileprivate func setupCommons() {
+    fileprivate func setupCommons(withConfig config: JsonConfig? = nil) {
+        //returns the value of instance's attribute(named key) contained in json dictionary (value)
 		self.commons.valueBlock = { (instance, value, key) -> AnyObject? in
 			guard let dict = value as? [String: AnyObject] else { return nil }
 			return dict[key] as AnyObject
 		}
 		
+        //set the value returned by valueBlock in the correct attribute (named key) of instance
 		self.commons.primitiveValueBlock = { (instance, value, key) -> Void in
 			instance.setValue(value, forKey: key)
 		}
 		
+        //unnecessary method (could be replaced by primitiveValueBlock)
 		self.commons.manualValueBlock = { (instance, value, key) -> Void in
 			instance.setValue(value, forKey: key)
 		}
