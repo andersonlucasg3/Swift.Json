@@ -6,7 +6,7 @@ Json auto-parsing for Swift.
 ##### Examples
 For using the JsonParser and JsonWriter classes you just need to declare your swift classes where all the properties are `@objc dynamic` and the class **MUST** extend from `NSObject`.
 Other thing is that `Obj-c` representable objects may be optional, but non `Obj-c` representable objects **MUST** be defined non optional.
-The `@objc dynamic` diretive will obligate you to define it right in swift <3.x, but in swift 4.x only `@objc` is required.
+The `@objc dynamic` diretive will obligate you to define it right in swift <=3.x, but in swift 4.x only `@objc` is required.
 
 ###### Writing example:
 Example of the implementation for converting objects to string.
@@ -51,7 +51,7 @@ assert(boss.employees![0].age == 35)
 ```
 
 ###### Naming Convention:
-Usually, the web use the snake_case pattern to name the properties, while Swift uses the camelCase pattern. Its possible to make the JsonWriter/JsonParser automatically do this conversion by passing a JsonConfig object in the write/parse operation. However, the JsonConfig must contain a functional CasePatternConverter associated. The Swift.Json lib provides you with two implementations for CasePatternConverter: CamelCaseConverter and SnakeCaseConverter.
+Usually, the web use the snake_case pattern to name the properties, while Swift uses the camelCase pattern. Its possible to make the JsonWriter/JsonParser automatically do this conversion by passing a JsonConfig object, with a functional CasePatternConverter associated, in the write/parse operation. The Swift.Json lib provides you with two implementations for CasePatternConverter: CamelCaseConverter and SnakeCaseConverter.
 Obs: Using the same classes from above.
 ```swift
 class Programmer: Employee {
@@ -63,11 +63,11 @@ let jsonString: String = // json string with snake_case naming convention (ex: "
 let config = JsonConfig()
 config.casePatternConverter = SnakeCaseConverter()
 
-//Parsing
-let programmer: Programmer = JsonParser().parse(string: jsonString, withConfig:config) // convert the json's "coffee_level" to programmers's "coffeeLevel".
+//Parsing: convert the json's "coffee_level" to programmers's "coffeeLevel".
+let programmer: Programmer = JsonParser().parse(string: jsonString, withConfig:config)
 
-//Writing
-let programmerJsonString: String = JsonWriter().write(anyObject: programmer, withConfig: config) // convert the programmers's "coffeeLevel" to json's "coffee_level"
+//Writing: convert the programmers's "coffeeLevel" to json's "coffee_level"
+let programmerJsonString: String = JsonWriter().write(anyObject: programmer, withConfig: config)
 ```
 
 Any doubts, post an issue or create a pull request. Pull requests are welcome.
