@@ -22,8 +22,8 @@ public class JsonConfig {
     /// You might whant use this property to automatically convert the json/object keys names case pattern.
     public var casePatternConverter: CasePatternConverter?
 	
-	public init() {
-		
+    public init(_ patternConverter: CasePatternConverter? = nil) {
+		self.casePatternConverter = patternConverter
 	}
 	
 	/// Sets the conversion block for a given field name.

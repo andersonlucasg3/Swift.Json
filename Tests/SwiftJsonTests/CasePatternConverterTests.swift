@@ -123,6 +123,34 @@ class CasePatternConverterTests: XCTestCase {
         assert(testObject.bigBoss?.employees?[1].lookingAge == employees[1]["looking_age"] as? Int)
     }
     
+    func testArrayRead() {
+        let jsonString = try! String(contentsOfFile: Bundle(for: self.classForCoder).path(forResource: "snakeCasedJsonArray", ofType: "json")!)
+        let config = JsonConfig(CasePatternConverter(json: SnakeCaseConverter(), object:nil))
+        let parser = JsonParser()
+        guard let array: [CTestObject] = parser.parse(string: jsonString, withConfig: config) else {
+            assertionFailure("array is Nil")
+            return
+        }
+        
+        assert(array[0].fullFakeName == "Anderson")
+        assert(array[1].fullFakeName == "Julio")
+        assert(array[2].fullFakeName == "Jorge")
+        
+        let writer = JsonWriter()
+        guard let otherJsonString: String = writer.write(anyArray: array, withConfig: config) else {
+            assertionFailure("other json string is Nil")
+            return
+        }
+        
+        guard let otherArray: [CTestObject] = parser.parse(string: otherJsonString, withConfig: config) else {
+            assertionFailure("other array is Nil")
+            return
+        }
+        
+        assert(array[0].fullFakeName == otherArray[0].fullFakeName)
+        assert(array[1].fullFakeName == otherArray[1].fullFakeName)
+        assert(array[2].fullFakeName == otherArray[2].fullFakeName)
+    }
 }
 
 
