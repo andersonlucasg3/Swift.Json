@@ -23,7 +23,7 @@ public protocol CasePatternConverter: class {
     func convertToField(_ key: String) -> String
 }
 
-extension CasePatternConverter {
+public extension CasePatternConverter {
     ///Convert the key to designated case pattern calling the complementary conversion method
     public func convert(_ key: String) -> String {
         let field = self.convertToField(key)
