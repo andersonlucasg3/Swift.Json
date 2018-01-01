@@ -93,12 +93,12 @@ public class JsonWriter {
 		
 		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
 			let jsonObject = self?.commons.write(fromObject: value!, withConfig: config)
-			instance.setValue(jsonObject, forKey: key)
+			instance.setValue(jsonObject, forKey: config?.casePatternConverter?.toJson(key) ?? key)
 		}
 		
 		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
 			let jsonArray = self?.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
-			instance.setValue(jsonArray, forKey: key)
+			instance.setValue(jsonArray, forKey: config?.casePatternConverter?.toJson(key) ?? key)
 		}
 	}
 	

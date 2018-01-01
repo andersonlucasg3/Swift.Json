@@ -69,7 +69,7 @@ class CasePatternConverterTests: XCTestCase {
         let testObject: CTestObject? = parser.parse(string: jsonString, withConfig: config)
         assert(testObject != nil)
         assert(testObject?.fullFakeName == "Anderson")
-        assert(testObject?.lookingAge == 25)
+        assert(testObject?.lookingAge == 25) 
         assert(testObject?.apparentHeight == 1.85)
         assert(testObject?.mostDangerousEmployee?.fullFakeName == "Jorge Xavier")
         assert(testObject?.mostDangerousEmployee?.lookingAge == 20)
@@ -77,9 +77,52 @@ class CasePatternConverterTests: XCTestCase {
         assert(testObject?.bigBoss?.lookingAge == 55)
         assert(testObject?.bigBoss?.sadisticSociopath == true)
         assert(testObject!.employees!.count > 0)
-        assert(testObject!.employees![0].fullFakeName == "Jorge Xavier")
+        assert(testObject!.employees![0].fullFakeName == "Jorge Xavier")        
     }
     #endif
+    
+    func testJsonWriter() {
+        let emp1 = CEmployee()
+        emp1.fullFakeName = "Emp 1"
+        emp1.lookingAge = 55
+        let emp2 = CEmployee()
+        emp2.fullFakeName = "Emp 2"
+        emp2.lookingAge = 35
+        
+        let testObject = CTestObject()
+        testObject.fullFakeName = "Anderson"
+        testObject.lookingAge = 27
+        testObject.mostDangerousEmployee = CEmployee()
+        testObject.mostDangerousEmployee?.fullFakeName = "Lucas"
+        testObject.mostDangerousEmployee?.lookingAge = 35
+        testObject.bigBoss = CBoss()
+        testObject.bigBoss?.sadisticSociopath = false
+        testObject.bigBoss?.employees = Array()
+        testObject.bigBoss?.employees?.append(emp1)
+        testObject.bigBoss?.employees?.append(emp2)
+        
+        let config = JsonConfig()
+        config.casePatternConverter = CasePatternConverter(json: SnakeCaseConverter(), object: nil)
+        let jsonData: Data? = JsonWriter().write(anyObject: testObject, withConfig: config)
+        
+        let jsonObject = try! JSONSerialization.jsonObject(with: jsonData!, options: .allowFragments) as! [String: AnyObject]
+        
+        assert(testObject.fullFakeName == jsonObject["full_fake_name"] as? String)
+        assert(testObject.lookingAge == jsonObject["looking_age"] as? Int)
+        
+        let employee = jsonObject["most_dangerous_employee"] as! [String: AnyObject]
+        assert(testObject.mostDangerousEmployee?.fullFakeName == employee["full_fake_name"] as? String)
+        assert(testObject.mostDangerousEmployee?.lookingAge == employee["looking_age"] as? Int)
+        
+        let boss = jsonObject["big_boss"] as! [String: AnyObject]
+        let employees = boss["employees"] as! [[String: AnyObject]]
+        assert(testObject.bigBoss?.employees?[0].fullFakeName == employees[0]["full_fake_name"] as? String)
+        assert(testObject.bigBoss?.employees?[0].lookingAge == employees[0]["looking_age"] as? Int)
+        
+        assert(testObject.bigBoss?.employees?[1].fullFakeName == employees[1]["full_fake_name"] as? String)
+        assert(testObject.bigBoss?.employees?[1].lookingAge == employees[1]["looking_age"] as? Int)
+    }
+    
 }
 
 

@@ -175,11 +175,11 @@ public class JsonParser {
 		}
 		
 		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withObject: value as AnyObject)
+			self?.populateObject(forKey: config?.casePatternConverter?.toObject(key) ?? key, intoInstance: instance, withTypeInfo: typeInfo, withObject: value as AnyObject)
 		}
 		
 		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateArray(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonArray: value as! [AnyObject])
+			self?.populateArray(forKey: config?.casePatternConverter?.toObject(key) ?? key, intoInstance: instance, withTypeInfo: typeInfo, withJsonArray: value as! [AnyObject])
 		}
 	}
 	
