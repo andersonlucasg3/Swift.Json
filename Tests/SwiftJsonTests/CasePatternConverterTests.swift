@@ -49,6 +49,68 @@ class CasePatternConverterTests: XCTestCase {
             assert(converter.convert($0.element) == fullyConverted[$0.offset])
         })
     }
+    
+    #if Xcode
+    func testJsonParser() {
+        let jsonString = try! String(contentsOfFile: Bundle(for: self.classForCoder).path(forResource: "snakeCasedJsonObject", ofType: "json")!)
+        
+        let config = JsonConfig()
+        config.set(forDataType: "Date") { (value, key) -> AnyObject? in
+            if key == "date" {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "dd/MM/yyyy"
+                return formatter.date(from: value as! String) as AnyObject
+            }
+            return nil
+        }
+        config.casePatternConverter = CamelCaseConverter()
+        
+        let parser = JsonParser()
+        let testObject: CTestObject? = parser.parse(string: jsonString, withConfig: config)
+        assert(testObject != nil)
+        assert(testObject?.fullFakeName == "Anderson")
+        assert(testObject?.lookingAge == 25)
+        assert(testObject?.apparentHeight == 1.85)
+        assert(testObject?.mostDangerousEmployee?.fullFakeName == "Jorge Xavier")
+        assert(testObject?.mostDangerousEmployee?.lookingAge == 20)
+        assert(testObject?.bigBoss?.name == "Thiago N.")
+        assert(testObject?.bigBoss?.age == 55)
+        assert(testObject?.bigBoss?.sadisticSociopath == true)
+        assert(testObject!.employees!.count > 0)
+        assert(testObject!.employees![0].fullFakeName == "Jorge Xavier")
+    }
+    #endif
 }
 
+
+@objc(CEmployee) class CEmployee: NSObject {
+    @objc fileprivate(set) dynamic var fullFakeName: String?
+    @objc fileprivate(set) dynamic var lookingAge: Int = 0
+    
+    required override init() {
+        super.init()
+    }
+}
+
+class CBoss : Employee {
+    @objc fileprivate(set) dynamic var sadisticSociopath: Bool = false
+    @objc fileprivate(set) dynamic var employees: [CEmployee]?
+    
+    required init() {
+        super.init()
+    }
+}
+
+class CTestObject : NSObject {
+    @objc fileprivate(set) dynamic var fullFakeName: String?
+    @objc fileprivate(set) dynamic var lookingAge: Int = 0
+    @objc fileprivate(set) dynamic var apparentHeight: Float = 0
+    @objc fileprivate(set) dynamic var mostDangerousEmployee: CEmployee?
+    @objc fileprivate(set) dynamic var bigBoss: CBoss?
+    @objc fileprivate(set) dynamic var employees: [CEmployee]?
+    
+    required override init() {
+        super.init()
+    }
+}
 

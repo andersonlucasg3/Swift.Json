@@ -11,6 +11,7 @@
 		714C63BE1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */; };
 		714ED7061EF0673300E8AD58 /* jsonObject.json in Resources */ = {isa = PBXBuildFile; fileRef = 714ED7041EF063D700E8AD58 /* jsonObject.json */; };
 		8E8BAEC41FFA5C4100714BC7 /* CasePatternConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */; };
+		8E8BAEC61FFA6D1D00714BC7 /* snakeCasedJsonObject.json in Sources */ = {isa = PBXBuildFile; fileRef = 8E8BAEC51FFA6D1C00714BC7 /* snakeCasedJsonObject.json */; };
 		8EC72B611FF93593009BFBB9 /* CasePatternConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC72B601FF93593009BFBB9 /* CasePatternConverter.swift */; };
 		OBJ_23 /* JsonCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* JsonCommon.swift */; };
 		OBJ_24 /* JsonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* JsonConfig.swift */; };
@@ -35,6 +36,7 @@
 		714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftJsonArrayTests.swift; sourceTree = "<group>"; };
 		714ED7041EF063D700E8AD58 /* jsonObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonObject.json; sourceTree = "<group>"; };
 		8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasePatternConverterTests.swift; sourceTree = "<group>"; };
+		8E8BAEC51FFA6D1C00714BC7 /* snakeCasedJsonObject.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snakeCasedJsonObject.json; sourceTree = "<group>"; };
 		8EC72B601FF93593009BFBB9 /* CasePatternConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasePatternConverter.swift; sourceTree = "<group>"; };
 		OBJ_10 /* JsonParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonParser.swift; sourceTree = "<group>"; };
 		OBJ_11 /* JsonWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonWriter.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 			children = (
 				714C63BB1FCCD36F007F76AE /* jsonArray.json */,
 				714ED7041EF063D700E8AD58 /* jsonObject.json */,
+				8E8BAEC51FFA6D1C00714BC7 /* snakeCasedJsonObject.json */,
 				OBJ_14 /* SwiftJsonTests.swift */,
 				8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */,
 				714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */,
@@ -207,6 +210,7 @@
 			files = (
 				OBJ_23 /* JsonCommon.swift in Sources */,
 				OBJ_24 /* JsonConfig.swift in Sources */,
+				8E8BAEC61FFA6D1D00714BC7 /* snakeCasedJsonObject.json in Sources */,
 				OBJ_25 /* JsonParser.swift in Sources */,
 				OBJ_26 /* JsonWriter.swift in Sources */,
 				8EC72B611FF93593009BFBB9 /* CasePatternConverter.swift in Sources */,
