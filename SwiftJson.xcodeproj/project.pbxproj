@@ -10,6 +10,7 @@
 		714C63BC1FCCD370007F76AE /* jsonArray.json in Resources */ = {isa = PBXBuildFile; fileRef = 714C63BB1FCCD36F007F76AE /* jsonArray.json */; };
 		714C63BE1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */; };
 		714ED7061EF0673300E8AD58 /* jsonObject.json in Resources */ = {isa = PBXBuildFile; fileRef = 714ED7041EF063D700E8AD58 /* jsonObject.json */; };
+		8E8BAEC41FFA5C4100714BC7 /* CasePatternConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */; };
 		8EC72B611FF93593009BFBB9 /* CasePatternConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC72B601FF93593009BFBB9 /* CasePatternConverter.swift */; };
 		OBJ_23 /* JsonCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* JsonCommon.swift */; };
 		OBJ_24 /* JsonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* JsonConfig.swift */; };
@@ -33,6 +34,7 @@
 		714C63BB1FCCD36F007F76AE /* jsonArray.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonArray.json; sourceTree = "<group>"; };
 		714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftJsonArrayTests.swift; sourceTree = "<group>"; };
 		714ED7041EF063D700E8AD58 /* jsonObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonObject.json; sourceTree = "<group>"; };
+		8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasePatternConverterTests.swift; sourceTree = "<group>"; };
 		8EC72B601FF93593009BFBB9 /* CasePatternConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasePatternConverter.swift; sourceTree = "<group>"; };
 		OBJ_10 /* JsonParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonParser.swift; sourceTree = "<group>"; };
 		OBJ_11 /* JsonWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonWriter.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				714C63BB1FCCD36F007F76AE /* jsonArray.json */,
 				714ED7041EF063D700E8AD58 /* jsonObject.json */,
 				OBJ_14 /* SwiftJsonTests.swift */,
+				8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */,
 				714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */,
 			);
 			name = SwiftJsonTests;
@@ -215,6 +218,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_33 /* SwiftJsonTests.swift in Sources */,
+				8E8BAEC41FFA5C4100714BC7 /* CasePatternConverterTests.swift in Sources */,
 				714C63BE1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
