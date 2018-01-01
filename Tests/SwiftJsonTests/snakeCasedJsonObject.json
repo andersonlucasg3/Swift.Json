@@ -12,17 +12,17 @@
         "sadistic_sociopath": true
     },
     "employees": [
-        {
-            "full_fake_name": "Jorge Xavier",
-            "looking_age": 20
-        },
-        {
-            "full_fake_name": "Jorge Xavier",
-            "looking_age": 20
-        },
-        {
-            "full_fake_name": "Jorge Xavier",
-            "looking_age": 20
-        }
-    ]
+      {
+         "full_fake_name": "Jorge Xavier",
+         "looking_age": 20
+      },
+      {
+         "full_fake_name": "Jorge Xavier",
+         "looking_age": 20
+      },
+      {
+         "full_fake_name": "Jorge Xavier",
+         "looking_age": 20
+      }
+  ]
 }

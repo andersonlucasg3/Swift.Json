@@ -19,8 +19,7 @@ public class JsonConfig {
 	/// Should the JsonWriter include null values, e.g.: { "client": null }
 	public var shouldIncludeNullValueKeys: Bool = true
     
-    /// You might whant use this property to automatically convert the json/object keys names case pattern. Usually, the json object use the snake_case pattern, while the swift use camelCase pattern.
-    /// There is two default implementations: SnakeCaseConverter and CamelCaseConverter
+    /// You might whant use this property to automatically convert the json/object keys names case pattern.
     public var casePatternConverter: CasePatternConverter?
 	
 	public init() {

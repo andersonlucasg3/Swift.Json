@@ -17,7 +17,7 @@ class CasePatternConverterTests: XCTestCase {
     
         let fullyConverted = ["_testPropertyOne_","_testPropertyTwo_","_testPropertyThree_","_testPropertyFour_","_testPropertyFive_","_testPropetySix_"]
         
-        let complementaryConversion: CasePatternConversionBlock? = { (key,convertedKey) -> String in
+        let complementaryConversion: NamingConventionConversionBlock? = { (key,convertedKey) -> String in
             let keyCamelCased = camelCased[toConvert.index(of: key)!]
             assert(keyCamelCased == convertedKey)
             return "_" + convertedKey + "_"
@@ -37,7 +37,7 @@ class CasePatternConverterTests: XCTestCase {
         
         let fullyConverted = ["_test_property_one_","_test_property_two_","_test_property_three_","_test_property_four_","_test_property_five_","_test_propety_six_"]
         
-        let complementaryConversion: CasePatternConversionBlock? = { (key,convertedKey) -> String in
+        let complementaryConversion: NamingConventionConversionBlock? = { (key,convertedKey) -> String in
             let keySnakeCased = snakeCased[toConvert.index(of: key)!]
             assert(keySnakeCased == convertedKey)
             return "_" + convertedKey + "_"
@@ -63,7 +63,7 @@ class CasePatternConverterTests: XCTestCase {
             }
             return nil
         }
-        config.casePatternConverter = CamelCaseConverter()
+        config.casePatternConverter = CasePatternConverter(json: SnakeCaseConverter(), object: nil)
         
         let parser = JsonParser()
         let testObject: CTestObject? = parser.parse(string: jsonString, withConfig: config)
@@ -73,8 +73,8 @@ class CasePatternConverterTests: XCTestCase {
         assert(testObject?.apparentHeight == 1.85)
         assert(testObject?.mostDangerousEmployee?.fullFakeName == "Jorge Xavier")
         assert(testObject?.mostDangerousEmployee?.lookingAge == 20)
-        assert(testObject?.bigBoss?.name == "Thiago N.")
-        assert(testObject?.bigBoss?.age == 55)
+        assert(testObject?.bigBoss?.fullFakeName == "Thiago N.")
+        assert(testObject?.bigBoss?.lookingAge == 55)
         assert(testObject?.bigBoss?.sadisticSociopath == true)
         assert(testObject!.employees!.count > 0)
         assert(testObject!.employees![0].fullFakeName == "Jorge Xavier")
@@ -92,7 +92,7 @@ class CasePatternConverterTests: XCTestCase {
     }
 }
 
-class CBoss : Employee {
+class CBoss : CEmployee {
     @objc fileprivate(set) dynamic var sadisticSociopath: Bool = false
     @objc fileprivate(set) dynamic var employees: [CEmployee]?
     
