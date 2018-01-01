@@ -161,25 +161,25 @@ public class JsonParser {
         //returns the value of instance's attribute(named key) contained in json dictionary (value)
 		self.commons.valueBlock = { (instance, value, key) -> AnyObject? in
 			guard let dict = value as? [String: AnyObject] else { return nil }
-			return dict[config?.casePatternConverter?.toJson(key) ?? key] as AnyObject
+			return dict[config?.casePatternConverter?.convert(key) ?? key] as AnyObject
 		}
 		
         //set the value returned by valueBlock in the correct attribute (named key) of instance
 		self.commons.primitiveValueBlock = { (instance, value, key) -> Void in
-			instance.setValue(value, forKey: config?.casePatternConverter?.toObject(key) ?? key)
+			instance.setValue(value, forKey: key)
 		}
 		
         //unnecessary method (could be replaced by primitiveValueBlock)
 		self.commons.manualValueBlock = { (instance, value, key) -> Void in
-			instance.setValue(value, forKey: config?.casePatternConverter?.toObject(key) ?? key)
+			instance.setValue(value, forKey: key)
 		}
 		
 		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateObject(forKey: config?.casePatternConverter?.toObject(key) ?? key, intoInstance: instance, withTypeInfo: typeInfo, withObject: value as AnyObject)
+			self?.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withObject: value as AnyObject)
 		}
 		
 		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateArray(forKey: config?.casePatternConverter?.toObject(key) ?? key, intoInstance: instance, withTypeInfo: typeInfo, withJsonArray: value as! [AnyObject])
+			self?.populateArray(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonArray: value as! [AnyObject])
 		}
 	}
 	

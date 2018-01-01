@@ -80,25 +80,25 @@ public class JsonWriter {
 	
 	fileprivate func setupCommons(withConfig config: JsonConfig?) {
 		self.commons.valueBlock = { (instance: AnyObject, value, key) -> AnyObject? in
-			return (instance as! NSObject).value(forKey: config?.casePatternConverter?.toObject(key) ?? key) as AnyObject
+			return (instance as! NSObject).value(forKey: key) as AnyObject
 		}
 		
 		self.commons.primitiveValueBlock = { (instance, value, key) -> Void in
-			instance.setValue(value, forKey: config?.casePatternConverter?.toJson(key) ?? key)
+			instance.setValue(value, forKey: config?.casePatternConverter?.convert(key) ?? key)
 		}
 		
 		self.commons.manualValueBlock = { (instance, value, key) -> Void in
-			instance.setValue(value, forKey: config?.casePatternConverter?.toJson(key) ?? key)
+			instance.setValue(value, forKey: config?.casePatternConverter?.convert(key) ?? key)
 		}
 		
 		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
 			let jsonObject = self?.commons.write(fromObject: value!, withConfig: config)
-			instance.setValue(jsonObject, forKey: config?.casePatternConverter?.toJson(key) ?? key)
+			instance.setValue(jsonObject, forKey: config?.casePatternConverter?.convert(key) ?? key)
 		}
 		
 		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
 			let jsonArray = self?.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
-			instance.setValue(jsonArray, forKey: config?.casePatternConverter?.toJson(key) ?? key)
+			instance.setValue(jsonArray, forKey: config?.casePatternConverter?.convert(key) ?? key)
 		}
 	}
 	

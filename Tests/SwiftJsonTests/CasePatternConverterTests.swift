@@ -17,7 +17,7 @@ class CasePatternConverterTests: XCTestCase {
     
         let fullyConverted = ["_testPropertyOne_","_testPropertyTwo_","_testPropertyThree_","_testPropertyFour_","_testPropertyFive_","_testPropetySix_"]
         
-        let complementaryConversion: NamingConventionConversionBlock? = { (key,convertedKey) -> String in
+        let complementaryConversion: CasePatternConversionBlock? = { (key,convertedKey) -> String in
             let keyCamelCased = camelCased[toConvert.index(of: key)!]
             assert(keyCamelCased == convertedKey)
             return "_" + convertedKey + "_"
@@ -37,7 +37,7 @@ class CasePatternConverterTests: XCTestCase {
         
         let fullyConverted = ["_test_property_one_","_test_property_two_","_test_property_three_","_test_property_four_","_test_property_five_","_test_propety_six_"]
         
-        let complementaryConversion: NamingConventionConversionBlock? = { (key,convertedKey) -> String in
+        let complementaryConversion: CasePatternConversionBlock? = { (key,convertedKey) -> String in
             let keySnakeCased = snakeCased[toConvert.index(of: key)!]
             assert(keySnakeCased == convertedKey)
             return "_" + convertedKey + "_"
@@ -63,7 +63,7 @@ class CasePatternConverterTests: XCTestCase {
             }
             return nil
         }
-        config.casePatternConverter = CasePatternConverter(json: SnakeCaseConverter(), object: nil)
+        config.casePatternConverter = SnakeCaseConverter()
         
         let parser = JsonParser()
         let testObject: CTestObject? = parser.parse(string: jsonString, withConfig: config)
@@ -102,7 +102,7 @@ class CasePatternConverterTests: XCTestCase {
         testObject.bigBoss?.employees?.append(emp2)
         
         let config = JsonConfig()
-        config.casePatternConverter = CasePatternConverter(json: SnakeCaseConverter(), object: nil)
+        config.casePatternConverter = SnakeCaseConverter()
         let jsonData: Data? = JsonWriter().write(anyObject: testObject, withConfig: config)
         
         let jsonObject = try! JSONSerialization.jsonObject(with: jsonData!, options: .allowFragments) as! [String: AnyObject]
@@ -125,7 +125,7 @@ class CasePatternConverterTests: XCTestCase {
     
     func testArrayRead() {
         let jsonString = try! String(contentsOfFile: Bundle(for: self.classForCoder).path(forResource: "snakeCasedJsonArray", ofType: "json")!)
-        let config = JsonConfig(CasePatternConverter(json: SnakeCaseConverter(), object:nil))
+        let config = JsonConfig(SnakeCaseConverter())
         let parser = JsonParser()
         guard let array: [CTestObject] = parser.parse(string: jsonString, withConfig: config) else {
             assertionFailure("array is Nil")
