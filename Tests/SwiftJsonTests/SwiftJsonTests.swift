@@ -139,7 +139,7 @@ class Swift_JsonTests: XCTestCase {
             let range = NSMakeRange(0, target.count)
             let pattern = "[^a-z^A-Z]+(.)"
             let firstChar = NSMakeRange(0, 1)
-            var nsTarget = NSString(string:target.lowercased())
+            var nsTarget = NSString(string:target)
             if let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators) {
                 let matches = regex.matches(in: target, options: .reportCompletion, range: range).reversed()
                 for match in matches {
@@ -151,28 +151,28 @@ class Swift_JsonTests: XCTestCase {
         
         
         func snakeCased(_ target: String) -> String {
-            let range = NSMakeRange(0, target.count)
-            let pattern = "[^a-z^A-Z]+(.)"
-            let nsTarget = NSMutableString(string:target.lowercased())
-            if let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators) {
-                regex.replaceMatches(in: nsTarget, options: .reportCompletion, range: range, withTemplate: "_$1")
+            let patternsAndTemplates: [String:String] = ["[^a-z^A-Z]+(.)":"_$1",
+                                                         "([a-z])([A-Z])":"$1_$2",
+                                                         "([A-Z])([A-Z])":"$1_$2"]
+            let nsTarget = NSMutableString(string:target)
+            patternsAndTemplates.keys.forEach { (pattern) in
+                let range = NSMakeRange(0, nsTarget.length)
+                let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators)
+                regex?.replaceMatches(in: nsTarget, options: .reportCompletion, range: range, withTemplate: patternsAndTemplates[pattern]!)
             }
-            return nsTarget as String
+            return (nsTarget as String).lowercased()
         }
         
         let fields = [
-            "_tipo  -  dois     _um",
-            "tipo_1",
-            "tipo um",
-            "tipo 1",
-            "_tipo-um",
-            " tipo um",
-            "Tipo-Um",
-            "TIPO_UM",
-            "TIPO-UM"
+            "hasAnAntToyWithAWing",
+            "Has-An-Ant-Toy-With-A-Wing",
+            "Has_An_Ant_Toy_With_A_Wing",
+            "HasAnAntToyWithAWing",
+            "has-an-ant-toy-with-a-wing",
+            "has_an_ant_toy_with_a_wing"
         ]
         fields.forEach { (field) in
-            print(camelCased(field)," - ",snakeCased(field))
+            print(field, ":", camelCased(field)," - ",snakeCased(field))
         }
     }
 }

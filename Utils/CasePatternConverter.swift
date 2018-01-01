@@ -27,8 +27,6 @@ public protocol CasePatternConverter: class {
 }
 
 extension CasePatternConverter {
-    var defaultRegex: NSRegularExpression? {return try? NSRegularExpression.init(pattern: "[^a-z^A-Z]+(.)", options: .useUnixLineSeparators)}
-    
     init(_ block: CasePatternConversionBlock? = nil) {
         self.init()
         self.complementaryConversion = block
@@ -47,13 +45,13 @@ open class CamelCaseConverter: CasePatternConverter {
     public var complementaryConversion: CasePatternConversionBlock?
     
     public func convertToField(_ key: String) -> String {
-        var nsTarget = NSString(string:key.lowercased())
-        let matches = self.defaultRegex?.matches(in: key, options: .reportCompletion, range: NSMakeRange(0, key.count)).reversed() ?? []
-        for match in matches {
-            nsTarget = NSString(string:nsTarget.replacingCharacters(in: match.range, with: nsTarget.substring(with: match.range(at:1)).uppercased()))
-        }
-        let converted = nsTarget.replacingCharacters(in: NSMakeRange(0, 1), with: nsTarget.substring(with: NSMakeRange(0, 1)).lowercased())
-        return converted
+        let pattern = "[^a-z^A-Z]+(.)"
+        var nsTarget = NSString(string:key)
+        let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators)
+        regex?.matches(in: key, options: .reportCompletion, range: NSMakeRange(0, key.count)).reversed().forEach({
+            nsTarget = NSString(string:nsTarget.replacingCharacters(in: $0.range, with: nsTarget.substring(with: $0.range(at:1)).uppercased()))
+        })
+        return nsTarget.replacingCharacters(in: NSMakeRange(0, 1), with: nsTarget.substring(with: NSMakeRange(0, 1)).lowercased())
     }
 }
 
@@ -64,9 +62,12 @@ open class SnakeCaseConverter: CasePatternConverter {
     public var complementaryConversion: CasePatternConversionBlock?
     
     public func convertToField(_ key: String) -> String {
+        let patternsAndTemplates: [String:String] = ["[^a-z^A-Z]+(.)":"_$1", "([a-z])([A-Z])":"$1_$2", "([A-Z])([A-Z])":"$1_$2"]
         let nsTarget = NSMutableString(string:key)
-        self.defaultRegex?.replaceMatches(in: nsTarget, options: .reportCompletion, range: NSMakeRange(0, key.count), withTemplate: "_$1")
-        let converted = nsTarget as String
-        return converted
+        patternsAndTemplates.keys.forEach { (pattern) in
+            let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators)
+            regex?.replaceMatches(in: nsTarget, options: .reportCompletion, range: NSMakeRange(0, nsTarget.length), withTemplate: patternsAndTemplates[pattern]!)
+        }
+        return (nsTarget as String).lowercased()
     }
 }

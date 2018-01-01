@@ -63,6 +63,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8E8BAEC11FFA549B00714BC7 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8EC72B601FF93593009BFBB9 /* CasePatternConverter.swift */,
+			);
+			path = Utils;
+			sourceTree = SOURCE_ROOT;
+		};
 		OBJ_12 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -105,8 +113,8 @@
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8E8BAEC11FFA549B00714BC7 /* Utils */,
 				OBJ_8 /* JsonCommon.swift */,
-				8EC72B601FF93593009BFBB9 /* CasePatternConverter.swift */,
 				OBJ_9 /* JsonConfig.swift */,
 				OBJ_10 /* JsonParser.swift */,
 				OBJ_11 /* JsonWriter.swift */,
