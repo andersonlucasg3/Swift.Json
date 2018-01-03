@@ -18,9 +18,12 @@ public class JsonConfig {
 	
 	/// Should the JsonWriter include null values, e.g.: { "client": null }
 	public var shouldIncludeNullValueKeys: Bool = true
+    
+    /// You might whant use this property to automatically convert the json/object's properties names case pattern.
+    public var casePatternConverter: CasePatternConverter?
 	
-	public init() {
-		
+    public init(_ patternConverter: CasePatternConverter? = nil) {
+		self.casePatternConverter = patternConverter
 	}
 	
 	/// Sets the conversion block for a given field name.

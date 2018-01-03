@@ -132,7 +132,7 @@ class Swift_JsonTests: XCTestCase {
 		let employee: Employee? = JsonParser().parse(string: jsonString)
 		
 		assert(employee?.name == nil)
-	}
+	}        
 }
 
 @objc(Employee) class Employee: NSObject {

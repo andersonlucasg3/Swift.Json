@@ -62,7 +62,7 @@ public class JsonParser {
     /// - Returns: The object populated with the values from the json Data.
     public func parse<T: NSObject>(data: Data, into object: inout T, withConfig config: JsonConfig? = nil) {
         guard let jsonObject = self.getJsonDict(data) else { return }
-        self.setupCommons()
+        self.setupCommons(withConfig: config)
         self.commons.populate(instance: object, withObject: jsonObject as AnyObject, withConfig: config)
         self.unsetupCommons()
     }
@@ -82,7 +82,7 @@ public class JsonParser {
             return self.getJsonArray(data)
         }
         guard let jsonArray: [[String: AnyObject]] = self.getJsonArray(data) else { return nil }
-        self.setupCommons()
+        self.setupCommons(withConfig: config)
         let mapped: [T] = jsonArray.map({
             let instance: T = (T.self as! NSObject.Type).init() as! T // (getInstance() as! T)
             self.commons.populate(instance: instance as AnyObject, withObject: $0 as AnyObject, withConfig: config)
@@ -157,16 +157,19 @@ public class JsonParser {
         return jsonArray
     }
 	
-	fileprivate func setupCommons() {
+    fileprivate func setupCommons(withConfig config: JsonConfig?) {
+        //returns the value of instance's attribute(named key) contained in json dictionary (value)
 		self.commons.valueBlock = { (instance, value, key) -> AnyObject? in
 			guard let dict = value as? [String: AnyObject] else { return nil }
-			return dict[key] as AnyObject
+			return dict[config?.casePatternConverter?.convert(key) ?? key] as AnyObject
 		}
 		
+        //set the value returned by valueBlock in the correct attribute (named key) of instance
 		self.commons.primitiveValueBlock = { (instance, value, key) -> Void in
 			instance.setValue(value, forKey: key)
 		}
 		
+        //unnecessary method (could be replaced by primitiveValueBlock)
 		self.commons.manualValueBlock = { (instance, value, key) -> Void in
 			instance.setValue(value, forKey: key)
 		}
