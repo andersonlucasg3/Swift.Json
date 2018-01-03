@@ -1,0 +1,28 @@
+{
+    "full_fake_name": "Anderson",
+    "looking_age": 25,
+    "apparent_height": 1.85,
+    "most_dangerous_employee": {
+        "full_fake_name": "Jorge Xavier",
+        "looking_age": 20
+    },
+    "big_boss": {
+        "full_fake_name": "Thiago N.",
+        "looking_age": 55,
+        "sadistic_sociopath": true
+    },
+    "employees": [
+      {
+         "full_fake_name": "Jorge Xavier",
+         "looking_age": 20
+      },
+      {
+         "full_fake_name": "Jorge Xavier",
+         "looking_age": 20
+      },
+      {
+         "full_fake_name": "Jorge Xavier",
+         "looking_age": 20
+      }
+  ]
+}
