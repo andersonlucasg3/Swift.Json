@@ -36,6 +36,8 @@ public extension CasePatternConverter {
  * Example: "sadistic_sociopath" and "full_fake_name" will become, respectively: "sadisticSociopath" and "fullFakeName"
  */
 open class CamelCaseConverter: CasePatternConverter {
+    private static let regex = try? NSRegularExpression.init(pattern: "[^a-z^A-Z]+(.)", options: .useUnixLineSeparators)
+    
     public var complementaryConversion: CasePatternConversionBlock?
     
     public init(_ block: CasePatternConversionBlock? = nil) {
@@ -43,10 +45,8 @@ open class CamelCaseConverter: CasePatternConverter {
     }
     
     public func convertToField(_ key: String) -> String {
-        let pattern = "[^a-z^A-Z]+(.)"
         var nsTarget = NSString(string:key)
-        let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators)
-        regex?.matches(in: key, options: .reportCompletion, range: NSMakeRange(0, key.count)).reversed().forEach({
+        CamelCaseConverter.regex?.matches(in: key, options: .reportCompletion, range: NSMakeRange(0, key.count)).reversed().forEach({
             nsTarget = NSString(string:nsTarget.replacingCharacters(in: $0.range, with: nsTarget.substring(with: $0.range(at:1)).uppercased()))
         })
         return nsTarget.replacingCharacters(in: NSMakeRange(0, 1), with: nsTarget.substring(with: NSMakeRange(0, 1)).lowercased())
@@ -58,19 +58,19 @@ open class CamelCaseConverter: CasePatternConverter {
  * Example: "sadisticSociopath" and "fullFakeName" will become, respectively: "sadistic_sociopath" and "full_fake_name"
  */
 open class SnakeCaseConverter: CasePatternConverter {
+    private static let firstStepPattern = try? NSRegularExpression.init(pattern: "[- _]+(.)", options: .useUnixLineSeparators)
+    private static let secondStepPattern = try? NSRegularExpression.init(pattern: "([^-^_^ ])([A-Z])", options: .useUnixLineSeparators)
+    
     public var complementaryConversion: CasePatternConversionBlock?
     
     public init(_ block: CasePatternConversionBlock? = nil) {
         self.complementaryConversion = block
     }
     
-    public func convertToField(_ key: String) -> String {
-        let patternsAndTemplates: [String:String] = ["[^a-z^A-Z]+(.)":"_$1", "([a-z])([A-Z])":"$1_$2", "([A-Z])([A-Z])":"$1_$2"]
+    public func convertToField(_ key: String) -> String {        
         let nsTarget = NSMutableString(string:key)
-        patternsAndTemplates.keys.forEach { (pattern) in
-            let regex = try? NSRegularExpression.init(pattern: pattern, options: .useUnixLineSeparators)
-            regex?.replaceMatches(in: nsTarget, options: .reportCompletion, range: NSMakeRange(0, nsTarget.length), withTemplate: patternsAndTemplates[pattern]!)
-        }
+        SnakeCaseConverter.firstStepPattern?.replaceMatches(in: nsTarget, options: .reportCompletion, range: NSMakeRange(0, nsTarget.length), withTemplate: "_$1")
+        SnakeCaseConverter.secondStepPattern?.replaceMatches(in: nsTarget, options: .reportCompletion, range: NSMakeRange(0, nsTarget.length), withTemplate: "$1_$2")
         return (nsTarget as String).lowercased()
     }
 }
