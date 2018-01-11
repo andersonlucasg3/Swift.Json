@@ -47,7 +47,15 @@ open class CamelCaseConverter: CasePatternConverter {
     public func convertToField(_ key: String) -> String {
         var nsTarget = NSString(string:key)
         CamelCaseConverter.regex?.matches(in: key, options: .reportCompletion, range: NSMakeRange(0, key.count)).reversed().forEach({
-            nsTarget = NSString(string:nsTarget.replacingCharacters(in: $0.range, with: nsTarget.substring(with: $0.range(at:1)).uppercased()))
+            func range(for result: NSTextCheckingResult, at index: Int) -> NSRange {
+                #if swift(>=4.0)
+                return result.range(at: index)
+                #else
+                return result.rangeAt(index)
+                #endif
+            }
+            
+            nsTarget = NSString(string:nsTarget.replacingCharacters(in: $0.range, with: nsTarget.substring(with: range(for: $0, at: 1)).uppercased()))
         })
         return nsTarget.replacingCharacters(in: NSMakeRange(0, 1), with: nsTarget.substring(with: NSMakeRange(0, 1)).lowercased())
     }
