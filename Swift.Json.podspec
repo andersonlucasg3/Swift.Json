@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
     spec.name                   = 'Swift.Json'
-    spec.version                = '1.6.2'
+    spec.version                = '1.6.3'
     spec.summary                = 'Json auto-[parser/writer] for Swift 3 and 4.'
 
     spec.homepage               = 'https://github.com/andersonlucasg3/Swift.Json'
@@ -11,6 +11,7 @@ Pod::Spec.new do |spec|
 
     spec.platform               = 'ios'
     spec.ios.deployment_target  = '8.0'
+    spec.tvos.deployment_target = '9.0'
 
     spec.source_files           = 'Sources/**/*.swift'
 
