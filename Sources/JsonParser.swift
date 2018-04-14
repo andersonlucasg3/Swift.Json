@@ -156,12 +156,16 @@ public class JsonParser {
         }
         return jsonArray
     }
+
+    fileprivate func convertCasePatter(_ config: JsonConfig?, for key: String) -> String {
+        return config?.casePatternConverter?.convert(key) ?? key
+    }
 	
     fileprivate func setupCommons(withConfig config: JsonConfig?) {
         //returns the value of instance's attribute(named key) contained in json dictionary (value)
-		self.commons.valueBlock = { (instance, value, key) -> AnyObject? in
+		self.commons.valueBlock = { [unowned self] (instance, value, key) -> AnyObject? in
 			guard let dict = value as? [String: AnyObject] else { return nil }
-			return dict[config?.casePatternConverter?.convert(key) ?? key] as AnyObject
+			return dict[self.convertCasePatter(config, for: key)] as AnyObject
 		}
 		
         //set the value returned by valueBlock in the correct attribute (named key) of instance
@@ -174,12 +178,18 @@ public class JsonParser {
 			instance.setValue(value, forKey: key)
 		}
 		
-		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateObject(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withObject: value as AnyObject)
+		self.commons.objectValueBlock = { [unowned self] (instance, typeInfo, value, key) -> Void in
+			self.populateObject(forKey: key,
+                                 intoInstance: instance,
+                                 withTypeInfo: typeInfo,
+                                 withObject: value as AnyObject)
 		}
 		
-		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			self?.populateArray(forKey: key, intoInstance: instance, withTypeInfo: typeInfo, withJsonArray: value as! [AnyObject])
+		self.commons.arrayValueBlock = { [unowned self] (instance, typeInfo, value, key) -> Void in
+			self.populateArray(forKey: key,
+                                intoInstance: instance,
+                                withTypeInfo: typeInfo,
+                                withJsonArray: value as! [AnyObject])
 		}
 	}
 	

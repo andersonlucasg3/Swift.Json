@@ -126,13 +126,18 @@ internal class JsonCommon {
 	fileprivate func canSetValue(typeInfo: TypeInfo, value: AnyObject?) -> Bool {
 		return (typeInfo.isOptional && type(of: value) == typeInfo.type) || self.isNotNil(value: value)
 	}
-	
+    
+    fileprivate func remapping(_ config: JsonConfig?, for key: String) -> String {
+        return config?.remappingManualParsing[key] ?? key
+    }
+
 	internal func populate(instance: AnyObject, withObject object: AnyObject, withConfig config: JsonConfig? = nil) {
 		var cls: Mirror? = Mirror(reflecting: instance)
 		while cls != nil {
 			for child in cls!.children {
-				let key = child.label!
-				let value = self.valueBlock?(instance, object, key)
+                guard let key = child.label else { continue }
+				let valueKey = self.remapping(config, for: key)
+				let value = self.valueBlock?(instance, object, valueKey)
 				
 				let propertyType = type(of: child.value)
 				let typeInfo = self.parseTypeString("\(propertyType)")
@@ -179,7 +184,8 @@ internal class JsonCommon {
 		var cls: Mirror? = Mirror(reflecting: object)
 		while (cls != nil) {
 			for child in cls!.children {
-				guard let key = child.label else { continue }
+				guard let label = child.label else { continue }
+                let key = self.remapping(config, for: label)
 				let value: AnyObject? = self.valueBlock?(object, nil, key)
 				
 				if !(config?.shouldIncludeNullValueKeys ?? true) && (value == nil || value is NSNull) {
