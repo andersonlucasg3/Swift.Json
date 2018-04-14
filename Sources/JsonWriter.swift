@@ -77,28 +77,32 @@ public class JsonWriter {
     }
     
     // MARK: -- End Array Writer
+    
+    fileprivate func convertCasePatter(_ config: JsonConfig?, for key: String) -> String {
+        return config?.casePatternConverter?.convert(key) ?? key
+    }
 	
 	fileprivate func setupCommons(withConfig config: JsonConfig?) {
 		self.commons.valueBlock = { (instance: AnyObject, value, key) -> AnyObject? in
 			return (instance as! NSObject).value(forKey: key) as AnyObject
 		}
 		
-		self.commons.primitiveValueBlock = { (instance, value, key) -> Void in
-			instance.setValue(value, forKey: config?.casePatternConverter?.convert(key) ?? key)
+		self.commons.primitiveValueBlock = { [unowned self] (instance, value, key) -> Void in
+			instance.setValue(value, forKey: self.convertCasePatter(config, for: key))
 		}
 		
-		self.commons.manualValueBlock = { (instance, value, key) -> Void in
-			instance.setValue(value, forKey: config?.casePatternConverter?.convert(key) ?? key)
+		self.commons.manualValueBlock = { [unowned self] (instance, value, key) -> Void in
+			instance.setValue(value, forKey: self.convertCasePatter(config, for: key))
 		}
 		
-		self.commons.objectValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			let jsonObject = self?.commons.write(fromObject: value!, withConfig: config)
-			instance.setValue(jsonObject, forKey: config?.casePatternConverter?.convert(key) ?? key)
+		self.commons.objectValueBlock = { [unowned self] (instance, typeInfo, value, key) -> Void in
+			let jsonObject = self.commons.write(fromObject: value!, withConfig: config)
+			instance.setValue(jsonObject, forKey: self.convertCasePatter(config, for: key))
 		}
 		
-		self.commons.arrayValueBlock = { [weak self] (instance, typeInfo, value, key) -> Void in
-			let jsonArray = self?.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
-			instance.setValue(jsonArray, forKey: config?.casePatternConverter?.convert(key) ?? key)
+		self.commons.arrayValueBlock = { [unowned self] (instance, typeInfo, value, key) -> Void in
+			let jsonArray = self.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
+			instance.setValue(jsonArray, forKey: self.convertCasePatter(config, for: key))
 		}
 	}
 	

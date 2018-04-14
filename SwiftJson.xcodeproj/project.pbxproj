@@ -10,6 +10,7 @@
 		714C63BC1FCCD370007F76AE /* jsonArray.json in Resources */ = {isa = PBXBuildFile; fileRef = 714C63BB1FCCD36F007F76AE /* jsonArray.json */; };
 		714C63BE1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */; };
 		714ED7061EF0673300E8AD58 /* jsonObject.json in Resources */ = {isa = PBXBuildFile; fileRef = 714ED7041EF063D700E8AD58 /* jsonObject.json */; };
+		71D6ABA120825DC300FE5447 /* RemappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D6ABA020825DC300FE5447 /* RemappingTests.swift */; };
 		8E8BAEC41FFA5C4100714BC7 /* CasePatternConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */; };
 		8E8BAEC91FFA6FE700714BC7 /* snakeCasedJsonObject.json in Resources */ = {isa = PBXBuildFile; fileRef = 8E8BAEC81FFA6FC800714BC7 /* snakeCasedJsonObject.json */; };
 		8E9C78DD1FFA8EE000F29EA1 /* snakeCasedJsonArray.json in Resources */ = {isa = PBXBuildFile; fileRef = 8E9C78DC1FFA8A6F00F29EA1 /* snakeCasedJsonArray.json */; };
@@ -36,6 +37,7 @@
 		714C63BB1FCCD36F007F76AE /* jsonArray.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonArray.json; sourceTree = "<group>"; };
 		714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftJsonArrayTests.swift; sourceTree = "<group>"; };
 		714ED7041EF063D700E8AD58 /* jsonObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = jsonObject.json; sourceTree = "<group>"; };
+		71D6ABA020825DC300FE5447 /* RemappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemappingTests.swift; sourceTree = "<group>"; };
 		8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasePatternConverterTests.swift; sourceTree = "<group>"; };
 		8E8BAEC81FFA6FC800714BC7 /* snakeCasedJsonObject.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snakeCasedJsonObject.json; sourceTree = "<group>"; };
 		8E9C78DC1FFA8A6F00F29EA1 /* snakeCasedJsonArray.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snakeCasedJsonArray.json; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				OBJ_14 /* SwiftJsonTests.swift */,
 				8E8BAEC21FFA5BED00714BC7 /* CasePatternConverterTests.swift */,
 				714C63BD1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift */,
+				71D6ABA020825DC300FE5447 /* RemappingTests.swift */,
 			);
 			name = SwiftJsonTests;
 			path = Tests/SwiftJsonTests;
@@ -124,8 +127,8 @@
 			isa = PBXGroup;
 			children = (
 				8E9C78DE1FFA9F0200F29EA1 /* Utils */,
-				OBJ_8 /* JsonCommon.swift */,
 				OBJ_9 /* JsonConfig.swift */,
+				OBJ_8 /* JsonCommon.swift */,
 				OBJ_10 /* JsonParser.swift */,
 				OBJ_11 /* JsonWriter.swift */,
 			);
@@ -227,6 +230,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_33 /* SwiftJsonTests.swift in Sources */,
+				71D6ABA120825DC300FE5447 /* RemappingTests.swift in Sources */,
 				8E8BAEC41FFA5C4100714BC7 /* CasePatternConverterTests.swift in Sources */,
 				714C63BE1FCCD4C1007F76AE /* SwiftJsonArrayTests.swift in Sources */,
 			);

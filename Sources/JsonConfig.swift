@@ -9,12 +9,13 @@
 import Foundation
 
 /// JsonConvertBlock is the block to convert values from object to json and json to object.
-public typealias JsonConvertBlock = ((_ object: AnyObject, _ andKey: String) -> AnyObject?)
+public typealias JsonConvertBlock = ((_ object: AnyObject, _ key: String) -> AnyObject?)
 
 /// JsonConfig class for setting custom conversion fields or data types.
 public class JsonConfig {
 	internal var fieldManualParsing: [String: JsonConvertBlock] = Dictionary()
 	internal var dataTypeManualParsing: [String: JsonConvertBlock] = Dictionary()
+    internal var remappingManualParsing: [String: String] = Dictionary()
 	
 	/// Should the JsonWriter include null values, e.g.: { "client": null }
 	public var shouldIncludeNullValueKeys: Bool = true
@@ -43,4 +44,14 @@ public class JsonConfig {
 	public func set(forDataType type: String, withConversionBlock block: @escaping JsonConvertBlock) {
 		self.dataTypeManualParsing[type] = block
 	}
+    
+    /// Sets the value for a given key to be remapped to the given counterpart key.
+    /// These values are used as it is, without conversions or threatments.
+    ///
+    /// - Parameters:
+    ///     - objectKey: the name of the field of the object to be mapped
+    ///     - jsonKey: the name of the field in the json to be mapped
+    public func set(fromKey key: String, to counterpartKey: String) {
+        self.remappingManualParsing[key] = counterpartKey
+    }
 }
