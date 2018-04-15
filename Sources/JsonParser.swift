@@ -182,22 +182,24 @@ public class JsonParser {
 			self.populateObject(forKey: key,
                                  intoInstance: instance,
                                  withTypeInfo: typeInfo,
-                                 withObject: value as AnyObject)
+                                 withObject: value as AnyObject,
+                                 withConfig: config)
 		}
 		
 		self.commons.arrayValueBlock = { [unowned self] (instance, typeInfo, value, key) -> Void in
 			self.populateArray(forKey: key,
                                 intoInstance: instance,
                                 withTypeInfo: typeInfo,
-                                withJsonArray: value as! [AnyObject])
+                                withJsonArray: value as! [AnyObject],
+                                withConfig: config)
 		}
 	}
 	
 	fileprivate func unsetupCommons() {
-		commons.primitiveValueBlock = nil
-		commons.manualValueBlock = nil
-		commons.objectValueBlock = nil
-		commons.arrayValueBlock = nil
+		self.commons.primitiveValueBlock = nil
+		self.commons.manualValueBlock = nil
+		self.commons.objectValueBlock = nil
+		self.commons.arrayValueBlock = nil
 	}
 	
 	fileprivate func getInstance<T: NSObject>() -> T {
@@ -208,25 +210,25 @@ public class JsonParser {
 		return type.init()
 	}
 	
-	fileprivate func populateArray(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonArray jsonArray: [AnyObject]) {
+    fileprivate func populateArray(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withJsonArray jsonArray: [AnyObject], withConfig config: JsonConfig?) {
 		var array = [AnyObject]()
 		for item in jsonArray {
-			if commons.isPrimitiveType(typeInfo.typeName) {
+			if self.commons.isPrimitiveType(typeInfo.typeName) {
 				array.append(item)
 			} else {
 				let cls: AnyClass? = NSClassFromString(typeInfo.typeName)
 				assert(cls != nil, "Could not convert class name \(typeInfo.typeName) to AnyClass instance. Please add @objc(\(typeInfo.typeName)) to your class definition.")
 				let inst: AnyObject = self.getInstance(forType: cls as! NSObject.Type)
-				commons.populate(instance: inst, withObject: item)
+				self.commons.populate(instance: inst, withObject: item, withConfig: config)
 				array.append(inst)
 			}
 		}
 		instance.setValue(array, forKey: key)
 	}
 	
-	fileprivate func populateObject(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withObject object: AnyObject) {
+    fileprivate func populateObject(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withObject object: AnyObject, withConfig config: JsonConfig?) {
 		let propertyInstance = self.getInstance(forType: typeInfo.type as! NSObject.Type)
-		commons.populate(instance: propertyInstance, withObject: object)
+		self.commons.populate(instance: propertyInstance, withObject: object, withConfig: config)
 		instance.setValue(propertyInstance, forKey: key)
 	}
 }

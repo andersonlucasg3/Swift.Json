@@ -101,16 +101,16 @@ public class JsonWriter {
 		}
 		
 		self.commons.arrayValueBlock = { [unowned self] (instance, typeInfo, value, key) -> Void in
-			let jsonArray = self.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo)
+			let jsonArray = self.jsonArray(fromObjects: value as! [AnyObject], withTypeInfo: typeInfo, withConfig: config)
 			instance.setValue(jsonArray, forKey: self.convertCasePatter(config, for: key))
 		}
 	}
 	
 	fileprivate func unsetupCommons() {
-		commons.primitiveValueBlock = nil
-		commons.manualValueBlock = nil
-		commons.objectValueBlock = nil
-		commons.arrayValueBlock = nil
+		self.commons.primitiveValueBlock = nil
+		self.commons.manualValueBlock = nil
+		self.commons.objectValueBlock = nil
+		self.commons.arrayValueBlock = nil
 	}
 	
 	fileprivate func jsonArray(fromObjects objects: [AnyObject], withTypeInfo typeInfo: TypeInfo, withConfig config: JsonConfig? = nil) -> AnyObject {
