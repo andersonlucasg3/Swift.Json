@@ -28,7 +28,7 @@ class Swift_JsonTests: XCTestCase {
 		let parser = JsonParser()
 		let testObject: TestObject? = parser.parse(string: jsonString, withConfig: config)
 		assert(testObject != nil)
-		assert(testObject?.name == "Anderson")
+		assert(testObject?.name as? String == "Anderson")
 		assert(testObject?.age == 25)
 		assert(testObject?.height == 1.85)
 		assert(testObject?.employee?.name == "Jorge Xavier")
@@ -54,7 +54,7 @@ class Swift_JsonTests: XCTestCase {
 		
 		let jsonObject = try! JSONSerialization.jsonObject(with: jsonString!.data(using: .utf8)!, options: .allowFragments) as! [String: AnyObject]
 		
-		assert(testObject.name == jsonObject["name"] as? String)
+		assert(testObject.name as? String == jsonObject["name"] as? String)
 		assert(testObject.age == jsonObject["age"] as? Int)
 		
 		let employee = jsonObject["employee"] as! [String: AnyObject]
@@ -87,7 +87,7 @@ class Swift_JsonTests: XCTestCase {
 		
 		let jsonObject = try! JSONSerialization.jsonObject(with: jsonData!, options: .allowFragments) as! [String: AnyObject]
 		
-		assert(testObject.name == jsonObject["name"] as? String)
+		assert(testObject.name as? String == jsonObject["name"] as? String)
 		assert(testObject.age == jsonObject["age"] as? Int)
 		
 		let employee = jsonObject["employee"] as! [String: AnyObject]
@@ -154,7 +154,7 @@ class Boss : Employee {
 }
 
 class TestObject : NSObject {
-    @objc fileprivate(set) dynamic var name: String?
+    @objc fileprivate(set) dynamic var name: Any?
     @objc fileprivate(set) dynamic var age: Int = 0
     @objc fileprivate(set) dynamic var height: Float = 0
     @objc fileprivate(set) dynamic var employee: Employee?
