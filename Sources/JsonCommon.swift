@@ -130,6 +130,22 @@ internal class JsonCommon {
     fileprivate func remapping(_ config: JsonConfig?, for key: String) -> String {
         return config?.remappingManualParsing[key] ?? key
     }
+    
+    fileprivate func setTypeInfoType(_ typeInfo: inout TypeInfo, _ key: String, _ instance: AnyObject) {
+        if typeInfo.type == nil {
+            typeInfo.type = self.getClassFromProperty(key, fromInstance: instance)
+            
+            if typeInfo.type == nil && (typeInfo.typeName == "AnyObject" || typeInfo.typeName == "Any") {
+                typeInfo.type = AnyObject.self
+            }
+        }
+    }
+    
+    fileprivate func createTypeInfo(_ propertyType: String, _ key: String, _ instance: AnyObject) -> TypeInfo {
+        var typeInfo = self.parseTypeString("\(propertyType)")
+        self.setTypeInfoType(&typeInfo, key, instance)
+        return typeInfo
+    }
 
 	internal func populate(instance: AnyObject, withObject object: AnyObject, withConfig config: JsonConfig? = nil) {
 		var cls: Mirror? = Mirror(reflecting: instance)
@@ -140,11 +156,7 @@ internal class JsonCommon {
 				let value = self.valueBlock?(instance, object, valueKey)
 				
 				let propertyType = type(of: child.value)
-				let typeInfo = self.parseTypeString("\(propertyType)")
-				
-				if typeInfo.type == nil {
-					typeInfo.type = self.getClassFromProperty(key, fromInstance: instance)
-				}
+				let typeInfo = self.createTypeInfo("\(propertyType)", key, instance)
 				
 				if self.isToCallManualBlock(key, inConfig: config) {
 					guard let block = config!.fieldManualParsing[key] else { continue }
@@ -193,11 +205,7 @@ internal class JsonCommon {
 				}
 				
 				let propertyType = type(of: child.value)
-				let typeInfo = self.parseTypeString("\(propertyType)")
-				
-				if typeInfo.type == nil {
-					typeInfo.type = self.getClassFromProperty(key, fromInstance: object)
-				}
+				let typeInfo = self.createTypeInfo("\(propertyType)", key, object)
 				
 				if self.isToCallManualBlock(key, inConfig: config) {
 					guard let block = config!.fieldManualParsing[key] else { continue }

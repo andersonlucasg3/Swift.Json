@@ -206,7 +206,7 @@ public class JsonParser {
 		return T()
 	}
 	
-	fileprivate func getInstance(forType type: NSObject.Type) -> AnyObject {
+	fileprivate func getInstance(forType type: AnyObject.Type) -> AnyObject {
 		return type.init()
 	}
 	
@@ -227,7 +227,7 @@ public class JsonParser {
 	}
 	
     fileprivate func populateObject(forKey key: String, intoInstance instance: AnyObject, withTypeInfo typeInfo: TypeInfo, withObject object: AnyObject, withConfig config: JsonConfig?) {
-		let propertyInstance = self.getInstance(forType: typeInfo.type as! NSObject.Type)
+		let propertyInstance = self.getInstance(forType: typeInfo.type as! AnyObject.Type)
 		self.commons.populate(instance: propertyInstance, withObject: object, withConfig: config)
 		instance.setValue(propertyInstance, forKey: key)
 	}
